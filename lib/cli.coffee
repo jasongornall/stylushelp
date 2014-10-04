@@ -32,12 +32,74 @@ exit = (msg='bye') ->
 log = (msg) ->
   console.log msg
 
+getPreSpaces = (str) ->
+  space_check = 0
+  for c in str
+    if c ==' '
+      space_check++
+    else
+      return space_check
+  return space_check
+
 
 console.log command, 'command'
 # COMMAND LINE STUFF
 switch command
 
-  # backup your site data
+  when 'findRedundencies'
+
+    fs.readdir args[0], (err, files) ->
+      for file in files
+        addFile = (file) ->
+          obj = {}
+          if /.styl/.test(file)
+            fs.readFile "#{args[0]}#{file}",'utf8', (err, data) ->
+              data = data.split('\n');
+              tagFound = false
+              attributeSet = []
+              tag = ''
+              space_check = 0
+              for line in data
+                if line.match(/(\n|^)\s*(div|span|i|\.|&|>).*/)
+                  tagFound = true
+
+                  if attributeSet.length
+                    obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
+                    attributeSet = []
+                    space_check = 0
+
+                  if getPreSpaces(line) > getPreSpaces(tag)
+                    tag += line
+                  else
+                    tag = line
+
+
+                else if tagFound
+                  pre_spaces = getPreSpaces(line)
+                  if space_check == 0
+                    space_check = pre_spaces
+                    if space_check == 0
+                      continue
+
+                  if space_check == pre_spaces
+                    attributeSet.push("#{line.trim()}")
+                  else
+                    obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
+                    tag = ''
+                    attributeSet = []
+                    space_check = 0
+
+
+              console.log obj
+        addFile(file)
+
+
+
+
+
+
+
+  # Normalize z index values
   when 'normalizeZvalues'
     sizeOf = (obj) ->
       size = 0
