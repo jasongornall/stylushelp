@@ -1,0 +1,31 @@
+{
+  "author": {
+    "name": "Jason Gornall",
+    "email": "gornall.jason@gmail.com"
+  },
+  "bin": {
+    "dobi": "./bin/dobi.js"
+  },
+  "bugs": {
+    "url": "https://github.com/lessthan3/dobi/issues",
+    "email": "bryant@lessthan3.com"
+  },
+  "dependencies": {
+    "async":          "0.9.x",
+    "coffee-script":  "1.7.x",
+  },
+  "description": "Stylus tools to help with development",
+  "directories": {
+    "lib": "./lib",
+    "bin": "./bin"
+  },
+  "homepage": "http://www.dobi.io",
+  "keywords": "dobi.io,lessthan3",
+  "name": "styler",
+  "preferGlobal": true,
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lessthan3/dobi.git"
+  },
+  "version": "1.0.0"
+}
