@@ -40,16 +40,23 @@ getPreSpaces = (str) ->
     else
       return space_check
   return space_check
+###
+checkAlphabetical = (data) ->
+  config.files.sort (a, b) ->
+    if a.attribute > b.path then 1 else -1.sort (a, b) -> if a.path > b.path then 1 else -1
+###
 
 
-console.log command, 'command'
 # COMMAND LINE STUFF
 processData = (command,args,next) =>
   switch command
 
     when 'alphabetizeStyle'
-      b = processData('convertStyleToJson',args)
-      console.log JSON.stringify(b,null,3)
+      processData 'convertStyleToJson',args, (data) =>
+        for file_name, file of data
+          for tag, attribute_info of file
+            if not(checkAlphabetical(attribute_info.attributes))
+              relphabetize(attribute_info.attributes,"#{args[0]}#{file}")
 
     when 'convertStyleToJson'
       fs.readdir args[0], (err, files) ->
@@ -71,6 +78,8 @@ processData = (command,args,next) =>
 
                     if attributeSet.length
                       obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
+                      obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
+
                       attributeSet = []
                       space_check = 0
 
@@ -88,9 +97,11 @@ processData = (command,args,next) =>
                         continue
 
                     if space_check == pre_spaces
-                      attributeSet.push({attribute:"#{line.trim()}",line:parseInt(line_num, 10) + 1})
+                      attributeSet.push("#{line.trim()}")
                     else
                       obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
+                      obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
+
                       tag = ''
                       attributeSet = []
                       space_check = 0
@@ -162,6 +173,9 @@ processData = (command,args,next) =>
     else
       log "invalid command #{command}"
       exit USAGE
+
+
+# Output data
 
 processData command, args, (value, options)=>
 
