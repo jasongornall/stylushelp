@@ -48,7 +48,8 @@ processData = (command,args,next) =>
   switch command
 
     when 'alphabetizeStyle'
-      processData('convertStyleToJson',args)
+      b = processData('convertStyleToJson',args)
+      console.log JSON.stringify(b,null,3)
 
     when 'convertStyleToJson'
       fs.readdir args[0], (err, files) ->
@@ -98,7 +99,7 @@ processData = (command,args,next) =>
                 total_return[file] = obj
                 processed++
                 if processed == files.length
-                  next(JSON.stringify(total_return,null,3))
+                  next(total_return,{is_json:true})
 
 
           addFile(file)
@@ -156,12 +157,15 @@ processData = (command,args,next) =>
 
           count += breathing_room
         generateJson (filesTotal) ->
-          c = console
-          c.log filesTotal
+          next(filesTotal)
 
     else
       log "invalid command #{command}"
       exit USAGE
 
-processData command, args, (data)=>
-  console.log data
+processData command, args, (value, options)=>
+
+  if options?.is_json
+    value = JSON.stringify(value,null,3)
+
+  console.log value
