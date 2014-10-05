@@ -59,8 +59,8 @@ switch command
               attributeSet = []
               tag = ''
               space_check = 0
-              for line in data
-                if line.match(/(\n|^)\s*(div|span|i|\.|&|>).*/)
+              for line_num, line of data
+                if line.match(/(\n|^)\s*(div|span|i|\.|&|>|@media).*/)
                   tagFound = true
 
                   if attributeSet.length
@@ -69,7 +69,7 @@ switch command
                     space_check = 0
 
                   if getPreSpaces(line) > getPreSpaces(tag)
-                    tag += line
+                    tag += line.trim()
                   else
                     tag = line
 
@@ -82,7 +82,7 @@ switch command
                       continue
 
                   if space_check == pre_spaces
-                    attributeSet.push("#{line.trim()}")
+                    attributeSet.push({attribute:"#{line.trim()}",line:parseInt(line_num, 10) + 1})
                   else
                     obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
                     tag = ''
@@ -90,7 +90,7 @@ switch command
                     space_check = 0
 
 
-              console.log obj
+              console.log(JSON.stringify(obj,null,3))
         addFile(file)
 
 
