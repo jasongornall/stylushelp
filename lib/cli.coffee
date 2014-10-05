@@ -17,7 +17,7 @@ USAGE = """
 Usage: styler <command> [command-specific-options]
 
 where <command> [command-specific-options] is one of:
-  normalizeZValues <path to stylus files               backup a site
+  normalizeZvalues <path to stylus files               backup a site
 """
 # get arguments and options
 argv = optimist.argv._
@@ -118,8 +118,29 @@ processData = (command,args,next) =>
 
 
 
+    when 'inspectZValues'
+      generateJson = (next) ->
+        processed = 1
+        filesTotal = {}
+        fs.readdir args[0], (err, files) ->
+          for file in files
+            addFile = (file) ->
+              if /.styl/.test(file)
+                fs.readFile "#{args[0]}#{file}",'utf8', (err, data) ->
+                  arr = data.match(/(z-index:? +)([0-9]+)/g)
+                  if arr?.length
+                    for val in arr
+                      val = val.match(/(z-index:? +)([0-9]+)/)
+                      z_index = parseInt(val[2],10)
 
-
+                      filesTotal[z_index] ?= []
+                      filesTotal[z_index].push(file)
+                  processed++
+                  if files.length is processed
+                    next(filesTotal)
+            addFile(file)
+      generateJson (filesTotal) ->
+        next(filesTotal,{is_json:true})
 
     # Normalize z index values
     when 'normalizeZvalues'
@@ -168,7 +189,7 @@ processData = (command,args,next) =>
 
           count += breathing_room
         generateJson (filesTotal) ->
-          next(filesTotal)
+          next(filesTotal,{is_json:true})
 
     else
       log "invalid command #{command}"
