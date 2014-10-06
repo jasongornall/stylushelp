@@ -211,12 +211,12 @@ processData = (command,args,next) =>
             return size;
 
           processData 'inspectZValues', args, (filesTotal) =>
-            count = 0
+            count = null
             breathing_room = args[1]
             breathing_room ?= 10
             for z_index, files of filesTotal
               z_index = parseInt(z_index,10)
-
+              count ?= Math.min(z_index,1)
               if z_index != count
                 for file in files
                   buf = fs.readFileSync("#{file}", 'utf8')
