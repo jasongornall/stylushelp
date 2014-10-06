@@ -4,6 +4,7 @@ async = require 'async'
 coffeelint = require 'coffeelint'
 fs = require 'fs'
 mkdirp = require 'mkdirp'
+async = require 'async'
 mongofb = require 'mongofb'
 ncp = require('ncp').ncp
 open = require 'open'
@@ -66,9 +67,6 @@ alphabetize = (data) =>
 
 
 
-
-
-
 # COMMAND LINE STUFF
 processData = (command,args,next) =>
   switch command
@@ -81,7 +79,9 @@ processData = (command,args,next) =>
 
 
     when 'alphabetizeStyle'
+      console.log 'wwhyyy'
       processData 'convertStyleToJson',args, (data) =>
+        console.log 'processed'
         for file_name, file of data
           for tag, attribute_info of file
             if (alphabetize(attribute_info.attributes))
@@ -95,60 +95,64 @@ processData = (command,args,next) =>
 
     when 'convertStyleToJson'
       fs.readdir args[0], (err, files) ->
+        console.log 'read_dir'
         total_return = {}
         processed = 0
-        for file in files
-          addFile = (file) ->
-            obj = {}
-            if /.styl/.test(file)
-              fs.readFile "#{args[0]}#{file}",'utf8', (err, data) ->
-                data = data.split('\n');
-                tagFound = false
-                attributeSet = []
-                tag = ''
-                space_check = 0
-                for line_num, line of data
-                  if line.match(/((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/)
-                    tagFound = true
 
-                    if attributeSet.length
-                      obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
-                      obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
+        async.each files, ((file, data_next) =>
+          obj = {}
+          console.log 'test styl'
+          if not (/.styl/.test(file))
+            data_next()
+            return
 
-                      attributeSet = []
-                      space_check = 0
+          fs.readFile "#{args[0]}#{file}",'utf8', (err, data) ->
+            console.log
+            data = data.split('\n');
+            tagFound = false
+            attributeSet = []
+            tag = ''
+            space_check = 0
+            for line_num, line of data
+              if line.match(/((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/)
+                tagFound = true
 
-                    if getPreSpaces(line) > getPreSpaces(tag)
-                      tag += " #{line.trim()}"
-                    else
-                      tag = line
+                if attributeSet.length
+                  obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
+                  obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
 
+                  attributeSet = []
+                  space_check = 0
 
-                  else if tagFound
-                    pre_spaces = getPreSpaces(line)
-                    if space_check == 0
-                      space_check = pre_spaces
-                      if space_check == 0
-                        continue
-
-                    if space_check == pre_spaces
-                      attributeSet.push("#{line.trim()}")
-                    else
-                      obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
-                      obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
-
-                      tag = ''
-                      attributeSet = []
-                      space_check = 0
+                if getPreSpaces(line) > getPreSpaces(tag)
+                  tag += " #{line.trim()}"
+                else
+                  tag = line
 
 
-                total_return[file] = obj
-                processed++
-                if processed == files.length
-                  next(total_return,{is_json:true})
+              else if tagFound
+                pre_spaces = getPreSpaces(line)
+                if space_check == 0
+                  space_check = pre_spaces
+                  if space_check == 0
+                    continue
+
+                if space_check == pre_spaces
+                  attributeSet.push("#{line.trim()}")
+                else
+                  obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
+                  obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
+
+                  tag = ''
+                  attributeSet = []
+                  space_check = 0
 
 
-          addFile(file)
+            total_return[file] = obj
+            data_next()
+        ), (err) ->
+          next(total_return,{is_json:true})
+
 
 
 
