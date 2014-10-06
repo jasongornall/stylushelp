@@ -11,8 +11,8 @@
       "email": "bryant@lessthan3.com"
   },
   "dependencies": {
-      "async": "0.9.x",
-      "coffee-script": "1.7.x",
+    "async": "0.9.x",
+    "coffee-script": "1.7.x"
   },
   "description": "Stylus tools to help with development",
   "directories": {
