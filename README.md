@@ -41,17 +41,17 @@ After Execution
   ```styl
     [test.styl]
     div
-      z-index 40
+      z-index 41
     a
-      z-index 20
+      z-index 21
     .panda
       .test
-        z-index 10
+        z-index 11
     [test2.styl]
     div
-      z-index 0
+      z-index 1
     .apple
-      z-index 30
+      z-index 31
   ```
 
   
