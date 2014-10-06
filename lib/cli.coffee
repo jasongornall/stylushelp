@@ -20,7 +20,8 @@ Usage: styler <command> [command-specific-options]
 where <command> [command-specific-options] is one of:
   normalizeZvalues <path to stylus dir or file>, [value to normalize on]
   inspectZValues <path to stylus dir or file>
-  convertStyleToJson <path to stylus dir or file>
+  convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
+  checkAlphabetized <path to stylus dir or file>
 """
 # get arguments and options
 argv = optimist.argv._
