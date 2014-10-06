@@ -18,7 +18,9 @@ USAGE = """
 Usage: styler <command> [command-specific-options]
 
 where <command> [command-specific-options] is one of:
-  normalizeZvalues <path to stylus files               backup a site
+  normalizeZvalues <path to stylus dir or file>, [value to normalize on]
+  inspectZValues <path to stylus dir or file>
+  convertStyleToJson <path to stylus dir or file>
 """
 # get arguments and options
 argv = optimist.argv._
@@ -63,6 +65,8 @@ alphabetize = (data) =>
     a.length is b.length and a.every (elem, i) -> elem is b[i]
   return not arrayEqual(old_data,data)
 
+prependStri = (args, str) =>
+
 getFiles = (args, next) =>
   type = ''
   fs.stat args[0], (err, stats) =>
@@ -90,14 +94,23 @@ processData = (command,args,next) =>
 
     getFiles args, (read_files) =>
       switch command
-        when 'test'
-
-          # Fs.WriteSync (fd, buffer, offset, length, position)
-
-
-          writeToLine("#{args[0]}","        wwwww 0",14)
-
-
+        when 'checkAlphabetized'
+          return_data = null
+          processData 'convertStyleToJson',args, (data) =>
+            for file_name, file of data
+              for tag, attribute_info of file
+                if (alphabetize(attribute_info.attributes))
+                  return_data = {
+                    line_number: attribute_info.line
+                    alphabetized: false
+                    file_name
+                  }
+                  next(return_data,{is_json:true})
+                  return
+            return_data ?= {
+              alphabetized: true
+            }
+            next(return_data,{is_json:true})
         when 'alphabetizeStyle'
           processData 'convertStyleToJson',args, (data) =>
             for file_name, file of data
@@ -107,9 +120,7 @@ processData = (command,args,next) =>
                   spaces = Array(parseInt(space_num+1)).join ' '
                   for line_num,attr of attribute_info.attributes
                     line = parseInt attribute_info.line + parseInt line_num
-                    console.log file_name,"#{spaces}#{attr}",line,attribute_info.line,line_num
                     writeToLine(file_name,"#{spaces}#{attr}",line)
-
 
         when 'convertStyleToJson'
           total_return = {}
@@ -117,13 +128,11 @@ processData = (command,args,next) =>
 
           async.each read_files, ((file, data_next) =>
             obj = {}
-            console.log 'test styl'
             if not (/.styl/.test(file))
               data_next()
               return
 
             fs.readFile file,'utf8', (err, data) ->
-              console.log
               data = data.split('\n');
               tagFound = false
               attributeSet = []
