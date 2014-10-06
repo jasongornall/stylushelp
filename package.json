@@ -4,7 +4,7 @@
       "email": "gornall.jason@gmail.com"
   },
   "bin": {
-      "dobi": "./bin/style-help.js"
+      "stylus-help": "./bin/stylus-help.js"
   },
   "bugs": {
     "email": "gornall.jason@gmail.com"
@@ -18,8 +18,8 @@
       "lib": "./lib",
       "bin": "./bin"
   },
-  "keywords": "stylus",
-  "name": "style-helper",
+  "keywords": "stylus, stylus help",
+  "name": "stylus-help",
   "preferGlobal": true,
   "repository": {
       "type": "git",
