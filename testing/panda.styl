@@ -1,17 +1,1186 @@
-$panel_width = 320
-$header_height = 50
-$footer_height = 50
-$texture = 'http://media.lessthan3.com/wp-content/uploads/2014/03/footer-overlay.png'
 
-// fancybox instagram styling
-.fancybox-skin.instagram
-  background $background_color
-  color color_offset($background_color,60)
-  .fancybox-title
-    padding 10px 10px 0px 10px
-    .info
-      .username
-        alpha 0
-        font-family $subtitle_font
+// custom variables
+$map_height = 100
+$map_height_px = unit($map_height, 'px')
+$header_height_px = $header_height + $header_top_height
+$media = 'http://www.lessthan3.com/media'
+$mobile_header_height_px = 50px
+
+$static_image = $media + '/53a37dc0325b387176972f4a/static.jpg'
+$static_image_hover = $media + '/539e4f1dd1823a0167d40536/screen2.gif'
+$static_image_hover = $media + '/53a37fcfd3666a7376801ad2/static-3.gif'
+
+// fancybox login
+.fancybox-wrap
+  box-shadow 0px 0px 200px -30px $secondary_color
+  .fancybox-skin
+    box-shadow 0px 0px 20px 6px rbga(0,0,0,0.5) !important
+  .fancybox-inner
+    display hidden !important
+
+#login-fancybox
+  background-size cover
+  background-position center center
+  box-shadow 10px 10px 10px 10px #FFF
+  color $frame_text_color
+  display none
+  height 300px
+  position relative
+  text-align center
+  text-transform uppercase
+  width 600px
+  .top
+    cursor default
+    font-family $subtitle_font
+    font-size 35px
+    line-height 35px
+    padding-top 40px
+    user-select none
+  .subtitle
+    cursor default
+    margin 0px auto
+    padding 40px 0
+    user-select none
+    width 400px
+  .fb-login
+    background $facebook_blue
+    border-radius 7px
+    cursor pointer
+    margin 0px auto
+    position relative
+    user-select none
+    padding 10px 10px
+    width 170px
+    i
+      font-size 22px
+      left 12px
+      line-height 10px
+      position absolute
+      margin-top -11px
+      top 50%
+      vertical-align middle
+    .fb-login-text
+      display block
+      margin-left 33px
+      text-align left
+      width 180px
+      &.loggin-in
+        content ''
+    &:hover
+      background darken($facebook_blue, 10)
+  .fancy-close
+    bottom 10px
+    color $facebook_blue
+    cursor pointer
+    position absolute
+    right 15px
+    user-select none
+    i
+      color $facebook_blue
+      margin-left 5px
+    &:hover, &:hover i
+      color darken($facebook_blue, 4)
+
+@media (max-width: 640px)
+  .fancybox-wrap
+    width 300px !important
+    height 360px !important
+    top 50% !important
+    left 50% !important
+    margin-left -150px !important
+    margin-top -180px !important
+
+    .fancybox-skin
+      height 100% !important
+      width 100% !important
+      .fancybox-outer
+        height 100%
+        position relative
+        width 100%
+        .fancybox-inner
+          background lighten(black, 8)
+          height 100% !important
+          margin 0px auto
+          position absolute
+          width 100% !important
+          #login-fancybox
+            background-position 80% 0%
+            background-repeat no-repeat
+            background-size contain
+            height 100% !important
+            overflow-x hidden
+            width 100% !important
+            .top
+              font-size 35px
+              line-height 40px
+              margin 0px auto
+              max-width 80%
+              padding-top 50px
+            .subtitle
+              font-size 12px
+              line-height 13px
+              max-width 80%
+              padding-bottom 40px
+            .fb-login
+              font-size 15px
+              padding 10px
+              width 180px
+              i
+                left 5px
+                top 11px
+                font-size 18px
+              .fb-login-text
+                margin-left 20px
+                width 170px
+
+//custom padding
+.hub.object.show-padding
+  > .channels > ul > li.channel, > .channels > ul > li.interstitial
+    > .content
+      padding-right 360px
+  > .channels > ul > li.channel > .content > .relative
+    > .container
+      &.fullscreen
+        bottom unit(66, 'px')
+        height auto
+        left 30px
+        margin-left 0px
+        margin-top 0px
+        right 20px
+        top 94px
+        width auto
+        .footer_buttons
+          bottom -21px
+
+      > .footer
+        bottom -36px
+        border 10px solid $background_color
+
+// style rules
+.hub.object
+  bottom $footer_height_px
+  left 0
+  position fixed
+  right 0
+  top 0px
+
+  // main background
+  > .background
+    background-color black
+    background-position center center
+    background-size cover
+    bottom $footer_height_px
+    left 0
+    position absolute
+    right 0
+    top 0
+
+  >.full-screen-overlay
+    background-size cover
+    bottom 50px
+    display none
+    left 0
+    position fixed
+    right 320px
+    top 0
+    z-index 110
+    background-position center center
+    &.fullscreen
+      background-size cover
+      bottom 0
+      display none
+      left 0
+      position fixed
+      right 0
+      top 0
+      z-index 110
+    &.active
+      display block
+    > a
+      display block
+      height 100%
+      width 100%
+
+  // countdown screen (pre-show)
+  > .countdown
+    background-color black
+    bottom 0
+    left 0
+    position absolute
+    right 0
+    text-align center
+    top 0
+    z-index 89
+    &.small
+      bottom: 48px;
+      height: auto;
+      left: 0px;
+      margin-left: 0px;
+      margin-top: 0px;
+      right: 320px;
+      top: 65px;
+      width: auto;
+
+
+    .welcome, .welcome-mobile
+      background-position center top
+      background-size cover
+      height 100%
+      left 0
+      position absolute
+      top 0
+      width 100%
+      z-index 30
+    .background, .background-mobile
+      background-color black
+      background-position center center
+      //stop changing this
+      background-size cover
+      background-repeat no-repeat
+
+      height 100%
+      position absolute
+      width 100%
+      z-index 35
+    .content
+      margin-top $mobile_header_height_px
+      position relative
+      z-index 40
+      &.hidden
+        .jquery-clock
+          display none
+      &.left
+        padding 5%
+        text-align left
+        .jquery-clock
+          text-align left
+      &.right
+        padding 5%
+        text-align right
+        .jquery-clock
+          text-align right
+      &.center
+        padding 5%
+        text-align center
+        .jquery-clock
+          text-align center
+        &.middle
+          margin-top 0px
+          position absolute;
+          top 33%
+          width 100%
+    .show-time
+      > img
+        max-width 100%
+    .show-time-mobile
+      > img
+        max-width 80%
+    .show-logo
+      > img
+        max-width 700px
+    .jquery-clock
+      padding-top 20px
+      position relative
+      text-align center
+      z-index 20
+      > .container > .time-unit
+        background rgba(black, .8)
+        ul.flip
+          &:after
+            height 2px
+            background black
+
+          > li a div.up:after
+            background-color rgba(#222222,.4)
+
+          > li a div div.numeric-value
+            background-color #222
+            color white
+            font-family arial
+            &:before
+              background linear-gradient(to bottom, #777 0%, #111 100%)
+              content ''
+              position absolute
+              width 200%
+              height 100%
+              top 0
+              left -164%
+              transform skew(-40deg, 0deg)
+              z-index -1
+              transition 250ms
+
+    .background-mobile, .welcome-mobile, .show-logo-mobile, .show-time-mobile
+      display none
+
+  // countdown on the interstitial ad
+  .interstitial .counter
+    color white
+    font-size 40px
+    left 70px
+    position absolute
+    top 40px
+
+  // camera select in the video footer
+  .channel .container .footer .camera-select
+    float left
+    padding-top 4px
+    > div, > div > div
+      display inline-block
+      vertical-align top
+    .icon
+      background $secondary_color
+      color $color
+      padding 5px
+    .title
+      background darken($background_color, 30)
+      font-family $title_font
+      color $color
+      font-size 12px
+      font-weight bold
+      line-height 30px
+      padding 0px 10px
+      text-transform uppercase
+    .camera
+      background darken($background_color, 30)
+      cursor pointer
+      font-family $title_font
+      color $color
+      font-size 12px
+      font-weight bold
+      line-height 30px
+      margin-left 2px
+      padding 0px 5px 0px 0px
+      img
+        height 16px
+        vertical-align middle
+      &:hover
+        background darken($background_color, 40)
+      &.active
+        background $secondary_color
+        > i
+          color white
+      &.hidden
+        display none
+      > i
+        color $secondary_color
+
+  // view count
+  .channel .container .footer .view-count
+    float right
+    height 34px
+    line-height 34px
+    padding-right 10px
+    display none
+    position relative
+    > .num
+      padding-right 5px
+
+  // controls
+  .channel .container .footer .controls
+    position relative
+    float right
+    height 34px
+    line-height 34px
+    > div
+      border-left 1px solid #333
+      cursor pointer
+      float right
+      height 34px
+      line-height 34px
+      padding 0px 10px
+      &:hover
+        background #222
+      > i
+        height 34px
+        line-height 34px
+        width 34px
+    > .resize
+      display block
+      &.hidden
+        display none
+    > .volume
+      text-align center
+      > .icon-volume-off
+        display none
+      &.mute
+        background $secondary_color
+        color white
+        padding 0px 4px
+        > .icon-volume-off
+          display inline-block
+        > .icon-volume-up
+          display none
+
+  // main channels layout
+  > .channels
+    bottom $footer_height_px
+    left 0
+    position absolute
+    right 0
+    top 0
+    z-index 10
+    > ul
+      height 100%
+      width 100%
+
+  // individual channel general layout
+  > .channels > ul > li.channel, > .channels > ul > li.interstitial
+    background-position top center
+    background-repeat no-repeat
+    background-size cover
+    height 100%
+    position relative
+    background darken($background_color, 60)
+    width 100%
+    > .main-logo
+      left 0px
+      position absolute
+      top 0px
+      width 220px
+      z-index 1000
+      &.minimize
+        width 100px
+      > img
+        width 100%
+    > .full-channel-overlay
+      .full-screen-ad
+        bottom 0
+        position absolute
+        top $header_height_px
+        width 100%
+        z-index 40
+        .timer
+          background color_offset($body_text_color,60)
+          color $body_text_color
+          position absolute
+          right 130px
+          top 11px
+          z-index 401
+        img.image_ad
+          width 100%
+          height 100%
+    > .mobile-channel-nav
+      background $secondary_color
+      box-sizing border-box
+      color white
+      display none
+      font-size 18px
+      height $mobile_header_height_px
+      line-height $mobile_header_height_px
+      position relative
+      text-align center
+      > .menu-button
+        cursor pointer
+        float left
+        padding-left 12px
+        padding-right 13px
+        background $color
+        > i
+          color color_offset($color,60)
+        &:hover
+          background darken($color,10)
+      > .name
+        color black_or_white($secondary_color)
+        height 100%
+        overflow hidden
+        text-align center
+        padding 0px 10px
+        > img
+          display block
+          margin auto
+          padding 11px 0px 4px 0px
+        > span
+          display block
+          font-weight bold
+          font-size 16px
+          line-height 16px
+          padding 5px 0px 4px 0px
+          text-overflow ellipsis
+          white-space nowrap
+          overflow hidden
+        > .watch-now
+          background color_offset($secondary_color,50)
+          color $secondary_color
+          cursor pointer
+          display inline-block
+          font-size 12px
+          line-height 12px
+          margin 0 auto
+          padding 2px 8px
+          position relative
+          text-transform uppercase
+          top -20px
+      > .left, > .right
+        background darken($secondary_color, 10)
+        border-bottom 2px solid #1a1a1a
+        box-sizing border-box
+        font-size 28px
+        height $mobile_header_height_px
+        line-height $mobile_header_height_px
+        position absolute
+        top 0
+        width ($mobile_header_height_px - 10px)
+        &:hover
+          background darken($secondary_color, 15)
+      > .left
+        left 0
+      > .right
+        right 0
+      &.inactive
+        background-image url($static_image)
+
+    > .background
+      background-position top center
+      background-repeat no-repeat
+      background-size cover
+      height 100%
+      position absolute
+      width 100%
+    > .name
+      font-family $title_font
+      font-size 40px
+      font-weight bold
+      left 90px
+      line-height 40px
+      position absolute
+      text-shadow -4px 0px 5px black
+      top 90px
+    > .overlay
+      background rgba(0, 0, 0, .5)
+      bottom 0
+      display none
+      left 0
+      position absolute
+      right 0
+      top 0
+    > .content
+      box-sizing border-box
+      height 100%
+      padding-right 320px
+      position absolute
+      width 100%
+      > .relative
+        height 100%
+        position relative
+        > .container
+          > .inactive-content
+            background-image url($static_image)
+            background-position center center
+            background-repeat no-repeat
+            display none
+            &:hover
+              background-image url($static_image_hover)
+
+  // individual channel content area
+  > .channels > ul > li.channel > .content > .relative
+    $position_shift = 60
+    > .wrapper
+      background-size cover
+      height 760px
+      left 50%
+      margin-left -520px
+      margin-top unit(-380 + $position_shift - $map_height/2, 'px')
+      position absolute
+      top 50%
+      width 1040px
+      z-index 10
+    > .container
+      background black
+      box-sizing border-box
+      height 360px
+      left 50%
+      margin-left -320px
+      margin-top unit(-180 + $position_shift - $map_height/2, 'px')
+      position absolute
+      top 50%
+      width 640px
+      z-index 20
+      &.fullscreen
+        bottom: 48px;
+        height: auto;
+        left: 0px;
+        margin-left: 0px;
+        margin-top: 0px;
+        right: 0px;
+        top: 65px;
+        width: auto;
+        &.mini-map-on
+          bottom unit($map_height+50, 'px')
+        > .video.pip
+          bottom 30px
+          position absolute
+          left 30px
+
+
+      > .footer_buttons
+        bottom -35px
+        position absolute
+        z-index 51
+        > div
+          display inline-block
+
+      // regular video
+      > .video
+        height 100%
+        width 100%
+        > .player
+          height 100%
+          overflow hidden
+          position relative
+          width 100%
+        > .twitch-controls
+          z-index 142
+          position absolute
+          bottom -35px
+
+        > .title
+          background black
+          border 3px solid lighten(black, 10)
+          box-sizing border-box
+          font-size 12px
+          font-weight bold
+          height 28px
+          left 50%
+          margin-left -100px
+          padding 2px
+          position absolute
+          text-align center
+          top -12px
+          width 200px
+          z-index 20
+          img
+            height 18px
+            padding 1px 0
+        > iframe, > .player
+          border 0
+          box-sizing border-box
+          height 100%
+          position relative
+          width 100%
+          z-index 10
+        .return-to-main
+          background $secondary_color
+          color color_offset($secondary_color,70)
+          cursor pointer
+          display none
+          font-family $subtitle_font
+          left 0
+          padding 5px
+          position absolute
+          top 0
+          z-index 25
+          &:hover
+            background color_offset($secondary_color,50)
+        .swap, .close
+          background $secondary_color
+          border 1px solid rgba(0,0,0,0.4)
+          cursor pointer
+          font-size 12px
+          opacity 0
+          padding 1px 3px
+          position absolute
+          top -10px
+          z-index 0
+          &:hover
+            background darken($secondary_color, 5)
+          &.swap
+            right -10px
+          &.close
+            left -10px
+
+      // pip video
+      > .video.pip
+        background black
+        bottom 35%
+        box-shadow 0px 0px 40px rgba($secondary_color, .2)
+        height 200px
+        left 50px
+        position fixed
+        width 355px
+        z-index 60
+        .swap, .close
+          opacity 1
+          z-index 80
+
+      > .video.camera.bigger
+        .return-to-main
+          display block
+
+      // when camera is main camera
+      > .video.main.hide
+        display none
+
+      > .footer
+        background lighten($background_color, 5)
+        border 10px solid lighten($background_color, 5)
+        border-top 6px solid lighten($background_color, 5)
+        bottom -48px
+        box-sizing border-box
+        position absolute
+        width 100%
+        z-index 50
+
+      > .message-wrapper
+        bottom 0
+        left 0
+        overflow hidden
+        position absolute
+        right 0
+        top 0
+        > .message
+          background none
+          bottom 0px
+          box-shadow rgba(0, 0, 0, 0.6) 0px 0px 0px
+          color white
+          font-size 30px
+          left 6px
+          line-height 25px
+          position absolute
+          right 6px
+          z-index 400
+          &.now-playing
+            bottom 20px
+
+
+  // inactive channel
+  > .channels > ul > li.channel > .background.inactive
+    -moz-filter grayscale(0.5) brightness(0.95)
+    -ms-filter grayscale(0.5) brightness(0.95)
+    -o-filter grayscale(0.5) brightness(0.95)
+    -webkit-filter grayscale(0.5) brightness(0.95)
+    -webkit-filter grayscale(0.5) brightness(0.95)
+    filter grayscale(0.5) brightness(0.95)
+
+  // inactive channel
+  > .channels > ul > li.channel > .content.inactive
+    > .relative
+      > .wrapper
+        -moz-filter grayscale(0.5) brightness(0.95)
+        -ms-filter grayscale(0.5) brightness(0.95)
+        -o-filter grayscale(0.5) brightness(0.95)
+        -webkit-filter grayscale(0.5) brightness(0.95)
+        -webkit-filter grayscale(0.5) brightness(0.95)
+        filter grayscale(0.5) brightness(0.95)
+      > .container
+        > .inactive-content
+          background-size cover
+          display block
+          border 6px solid lighten(black, 10)
+          box-sizing border-box
+          height 100%
+          padding 20px 10px 10px 10px
+          > .title
+            background black
+            border 3px solid lighten(black, 10)
+            box-sizing border-box
+            font-size 12px
+            font-weight bold
+            height auto
+            left 50%
+            margin-left -100px
+            padding 2px
+            position absolute
+            text-align center
+            top -12px
+            width 200px
+            z-index 20
+          > .header
+            background $frame_background_color
+            color $frame_text_color
+            font-family $subtitle_font
+            font-size 20px
+            margin-bottom 5px
+            padding 15px 0
+            text-align center
+            text-transform uppercase
+          > .body
+            background $frame_background_color
+            > span
+              display block
+              padding 10px 0
+              text-align center
+              text-transform uppercase
+            .channel-selector
+              background lighten($background_color, 15)
+              width 100%
+              tbody tr
+                &:hover
+                  td > .channel-name
+                    background darken($secondary_color, 5)
+                  td > .artist-name-wrap
+                    background $secondary_color
+                    > .artist-name, > i
+                      color $frame_text_color
+                > .channel, > .now-playing
+                  background lighten($background_color, 15)
+                  margin 3px 0
+                  padding-top 1px
+                  > div
+                    cursor pointer
+                    padding 10px
+                    user-select none
+                > .channel
+                  width 35%
+                  > .channel-name
+                    background $background_color
+                    color $frame_text_color
+                    font-family $subtitle_font
+                    font-size 18px
+                > .now-playing
+                  width 65%
+                  > .artist-name-wrap
+                    background lighten($background_color, 10)
+                    position relative
+                    > .artist-name, > i
+                      display inline-block
+                    > i
+                      color $secondary_color
+                      float right
+                      font-size 35px
+                      position absolute
+                      right 5px
+                      top 3px
+
+
+  // interstitial
+  > .channels > ul > li.interstitial
+    background-size cover
+
+  // mini-map for channel navigation
+  > .mini-map
+    background-position bottom center
+    background-size cover
+    bottom $footer_height_px
+    height $map_height_px
+    left 0
+    position absolute
+    right 0
+    z-index 40
+    .prev, .next
+      background color_offset($secondary_color,70)
+      background_hover(color_offset($secondary_color,70))
+      cursor pointer
+      font-size 30px
+      height 100%
+      z-index 101
+      &.off
+        display none
+      > i
+        color $secondary_color
+        position relative
+        top unit($map_height/2 - 16, 'px')
+    .prev
+      left 0px
+      position absolute
+      vertical-align center
+    .next
+      position absolute
+      right 0px
+      vertical-align center
+    .cycle-slideshow
+      margin auto
+      overflow visible !important
+      .channel
+        cursor pointer
+        display inline-block
+        height 100%
+        position relative !important
+        text-align center
+        &:hover
+          > .now-playing:not(.off)
+            display block
+          > .icon > .active
+            display block
+          > .icon > .normal
+            display none
+        &:hover, &.active
+          > .arrow
+            display block
+          > .logo > .active
+            display block
+          > .logo > .normal
+            display none
+        > .arrow
+          display none
+          left 50%
+          margin-left -10px
+          margin-top -10px
+          position absolute
+          width 20px
+          > img
+            width 100%
+        > .now-playing
+          background #191919
+          border-bottom 4px solid $frame_text_color
+          color $body_text_color
+          display none
+          left 50%
+          margin-left -125px
+          position absolute
+          top -176px
+          width 250px
+          > span:first-child
+            color lighten(black, 60)
+            display block
+            font-size 15px
+            line-height 16px
+            padding 6px 0 1px
+            text-transform uppercase
+          > .thumbnail
+            background-position center center
+            background-repeat no-repeat
+            background-size cover
+            height 140px
+            position relative
+            width 250px
+            > .channel-name
+              background rgba(0, 0, 0, 0.5)
+              bottom 0
+              box-sizing border-box
+              color #fff
+              display inline-block
+              left 0
+              padding 5px 10px
+              position absolute
+              white-space normal
+              width 100%
+              word-wrap break-word
+        > .name, > .logo
+          text-align center
+          .active
+            display none
+        > .icon
+          .active
+            display none
+          > div
+            bottom 0
+            left 25%
+            margin 0 auto
+            position absolute
+            vertical-align bottom
+            width 50%
+            > img
+              padding-top 10px
+              height 60px
+
+  // notifications
+  > .notification
+    background #171717
+    border 6px solid #1c1c1c
+    border-radius 33px
+    bottom unit($footer_height + $map_height + 20, 'px')
+    box-shadow 0px 0px 40px black, inset 0 0 10px black
+    box-sizing border-box
+    display none
+    height 66px
+    left 40px
+    position absolute
+    z-index 35
+    .avatar
+      width 40px
+      margin-top 8px
+      margin-left 10px
+    div
+      display inline-block
+      vertical-align top
+    .login, .load-channel
+      color $secondary_color
+      cursor pointer
+    .icon
+      background-image url($media + '/539b96aa0f9b537741e77f77/presence-ava.png')
+      background-size cover
+      border 2px solid #9a81e1
+      border-radius 50%
+      height 50px
+      overflow hidden
+      width 50px
+    .message
+      box-sizing border-box
+      font-size 14px
+      height 60px
+      line-height 60px
+      padding 0px 20px 0px 10px
+
+.maestro-auth
+  margin 0px
+  .chosen-container
+    color black
+  #jquery-modal-window
+    background rgba(0, 0, 0, .7) !important
+    border none !important
+    padding-top 0px !important
+    #jquery-modal-content
+      background none !important
+      box-shadow 0px 0px 100px $secondary_color !important
+      overflow visible !important
+      padding 0px !important
+      .header
+        background black
+        border-bottom 2px solid rgba($secondary_color, .5)
+        padding 10px 0px
+        text-align center
         text-transform uppercase
-        wwwww 0
+        .icon-cancel
+          cursor pointer
+          position absolute
+          right 10px
+          top 10px
+      .body
+        padding 20px
+        text-align center
+        .message
+          margin-bottom 20px
+        input, select, .chosen-container
+          margin-bottom 10px
+        .submit
+          float right
+          margin-bottom 20px
+        #email-login
+          > input
+            background $facebook_blue
+            border none
+            border-radius 4px
+            margin 0 auto
+            width 300px
+
+#application.hide-header , #application.hub.hide-header
+  > #main-wrapper
+    #header
+      display none
+    #content-wrapper
+      #content
+        top 0px
+
+#application.hub
+  > #main-wrapper
+    #header
+      display block
+    #content-wrapper
+      #content
+        top 0px
+        bottom 0px
+
+// shrink video at 1200px
+@media (max-width: 1200px)
+  .hub.object
+    > .channels
+      > ul
+        > li.channel, > li.interstitial
+          > .main-logo
+            width 180px
+          > .content
+            > .relative
+              > .wrapper
+                height 664px
+                margin-left -455px
+                margin-top -332px
+                width 910px
+              > .container
+                height 315px
+                margin-left -280px
+                margin-top -158px
+                width 560px
+    .channel .container .footer .camera-select
+      .title
+        display none
+
+
+
+@media (max-width: 768px)
+  #application.hub.show-started > #main-wrapper #header
+    display none
+
+  #application.hide-header
+    > #main-wrapper
+      #content-wrapper
+        top 0px
+        #content
+          top 0px
+
+  #application.hub
+    .panels-wrapper
+      display none
+    > #main-wrapper
+      #content-wrapper
+        top 0px
+        #content
+          top 0px
+          .hub.object > .channels
+            > ul > li
+              background-size cover
+            .content
+              padding-right 0px
+  #application.hide-header
+    > #main-wrapper
+      #content-wrapper
+        top 0px
+        #content
+          top 0px
+  #application.hub
+    .panels-wrapper
+      bottom 0
+      display block
+      left 0
+      right 0
+      top $mobile_header_height_px
+      z-index 100
+      width 100%
+      .panels .panel
+        bottom 0px
+        transform translate3d(-768px, 0, 0)
+        &.active
+          transform translate3d(0, 0, 0)
+      .menu
+        transform translate3d(768px, 0, 0)
+        &.active
+          transform translate3d(0, 0, 0)
+    > #main-wrapper
+      #content-wrapper
+        overflow hidden
+        bottom 0px
+        top 0px
+        #content
+          bottom 0px
+          top 0px
+          .hub.object
+            bottom 0px
+
+  .hub.object
+    > .full-screen-overlay.active
+      display none
+
+    > .countdown
+      .background, .welcome, .show-logo, .show-time
+        display none
+      .background-mobile, .welcome-mobile, .show-logo-mobile, .show-time-mobile
+        display block
+      .jquery-clock
+        .time-unit
+          height 65px
+          width 80px
+          > .flip
+            font-size 48px
+            height 56px
+            line-height 54px
+            width 32px
+            &:first-child
+              margin-right 4px
+
+    > .mini-map
+      display none
+
+    > .notification
+      display none !important
+
+    > .channels
+      bottom 0
+      > ul
+        > li.channel, > li.interstitial
+          > .main-logo
+            display none
+          > .background
+            display none
+          > .content
+            display none
+          > .mobile-channel-nav
+            display block
