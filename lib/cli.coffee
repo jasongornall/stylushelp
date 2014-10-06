@@ -40,23 +40,58 @@ getPreSpaces = (str) ->
     else
       return space_check
   return space_check
-###
-checkAlphabetical = (data) ->
-  config.files.sort (a, b) ->
-    if a.attribute > b.path then 1 else -1.sort (a, b) -> if a.path > b.path then 1 else -1
-###
+
+writeToLine = (file, line_str, line_num) =>
+  file_str = ''
+  data = fs.readFileSync file,'utf8'
+  data = data.split('\n');
+  for line_number, line of data
+    end_line = ''
+    if line_number == "#{line_num-1}"
+      line = line_str
+    if "#{data.length-1}" !=line_number
+      end_line = '\n'
+    file_str+="#{line}#{end_line}"
+  console.log file_str
+  fs.writeFileSync(file, file_str, 'utf8')
+
+alphabetize = (data) =>
+  old_data = data.slice(0)
+  data.sort (a, b) -> if a > b then 1 else -1
+  arrayEqual = (a, b) ->
+    a.length is b.length and a.every (elem, i) -> elem is b[i]
+  return not arrayEqual(old_data,data)
+
+
+
+
+
+
 
 
 # COMMAND LINE STUFF
 processData = (command,args,next) =>
   switch command
+    when 'test'
+
+      # Fs.WriteSync (fd, buffer, offset, length, position)
+
+
+      writeToLine("#{args[0]}","        wwwww 0",14)
+
 
     when 'alphabetizeStyle'
       processData 'convertStyleToJson',args, (data) =>
         for file_name, file of data
           for tag, attribute_info of file
-            if not(checkAlphabetical(attribute_info.attributes))
-              relphabetize(attribute_info.attributes,"#{args[0]}#{file}")
+            if (alphabetize(attribute_info.attributes))
+              space_num = attribute_info.space_check
+              spaces = Array(parseInt(space_num+1)).join ' '
+              for line_num,attr of attribute_info.attributes
+                line = parseInt attribute_info.line + parseInt line_num
+                console.log "#{args[0]}#{file_name}","#{spaces}#{attr}",line,attribute_info.line,line_num
+                writeToLine("#{args[0]}#{file_name}","#{spaces}#{attr}",line)
+
 
     when 'convertStyleToJson'
       fs.readdir args[0], (err, files) ->
@@ -73,7 +108,7 @@ processData = (command,args,next) =>
                 tag = ''
                 space_check = 0
                 for line_num, line of data
-                  if line.match(/(\n|^)\s*(div|span|i|\.|&|>|#|@media).*/)
+                  if line.match(/((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/)
                     tagFound = true
 
                     if attributeSet.length
