@@ -3,7 +3,7 @@
       "name": "Jason Gornall",
       "email": "gornall.jason@gmail.com"
   },
-  "main": "./bin/stylus-help",
+  "main": "./lib/stylus-help",
   "bin": {
     "stylus-help": "./bin/stylus-help"
   },
@@ -27,5 +27,5 @@
       "type": "git",
       "url": "git@github.com:jasongornall/stylushelp.git"
   },
-  "version": "1.0.0"
+  "version": "1.0.2"
 }
