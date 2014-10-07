@@ -182,6 +182,105 @@ After Execution
 
   ```
   
+### convertStyleToJson
+  Returns a json structure with a true or false and a line number showing where the non alphabetized attribute starts
+  
+  sample call 
+  ```
+  stylus-help alphabetizeStyle testing/test.styl
+  ```
+
+ Sample File
+ ```
+underline()
+  &:not(.signup):not(.background)
+    box-sizing border-box
+    border-bottom 4px solid rgba($color, 0)
+    cursor pointer
+    padding 0px 5px
+    &:hover
+      background rgba($frame_background_color, .4)
+      border-bottom 4px solid $color
+
+.exports.region
+  border-top 1px solid $background_color
+  bottom 0
+  box-shadow 0px 0px 20px rgba(0, 0, 0, .4)
+  color $footer_text_color
+  height unit($footer_height, 'px')
+  font-family $title_font
+  left 0
+  position fixed
+  right 0
+  text-align center
+  transition all .2s ease-in
+  z-index 16
+  .newsletter.custom_text > a
+    i, span
+      color $footer_text_color
+      div, a , iframe
+        margin-left 10px
+
+
+ ```
+ Json Conversion Note the space_check is exactly how many spaces to write if you want to modify and line is where the attributes start. line-1 is the style header
+  ```json
+{
+   "testing/test.styl": {
+      "&:not(.signup):not(.background)": {
+         "space_check": 4,
+         "attributes": [
+            "box-sizing border-box",
+            "border-bottom 4px solid rgba($color, 0)",
+            "cursor pointer",
+            "padding 0px 5px"
+         ],
+         "line": 3
+      },
+      "&:not(.signup):not(.background) &:hover": {
+         "space_check": 6,
+         "attributes": [
+            "background rgba($frame_background_color, .4)",
+            "border-bottom 4px solid $color"
+         ],
+         "line": 8
+      },
+      ".exports.region": {
+         "space_check": 2,
+         "attributes": [
+            "border-top 1px solid $background_color",
+            "bottom 0",
+            "box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
+            "color $footer_text_color",
+            "height unit($footer_height, 'px')",
+            "font-family $title_font",
+            "left 0",
+            "position fixed",
+            "right 0",
+            "text-align center",
+            "transition all .2s ease-in",
+            "z-index 16"
+         ],
+         "line": 12
+      },
+      ".exports.region .newsletter.custom_text > a i, .exports.region .newsletter.custom_text > a span": {
+         "space_check": 6,
+         "attributes": [
+            "color $footer_text_color"
+         ],
+         "line": 26
+      },
+      ".exports.region .newsletter.custom_text > a i div, .exports.region .newsletter.custom_text > a i a, .exports.region .newsletter.custom_text > a i iframe, .exports.region .newsletter.custom_text > a span div, .exports.region .newsletter.custom_text > a span a, .exports.region .newsletter.custom_text > a span iframe": {
+         "space_check": 8,
+         "attributes": [
+            "margin-left 10px"
+         ],
+         "line": 28
+      }
+   }
+}
+
+  ```
   
 
   
