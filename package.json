@@ -10,6 +10,7 @@
     "email": "gornall.jason@gmail.com"
   },
   "dependencies": {
+    "optimist": "0.6.x",
     "async": "0.9.x",
     "coffee-script": "1.7.x"
   },
@@ -19,7 +20,7 @@
       "bin": "./bin"
   },
   "keywords": "stylus, stylus help",
-  "name": "stylus-help",
+  "name": "style-helper",
   "preferGlobal": true,
   "repository": {
       "type": "git",

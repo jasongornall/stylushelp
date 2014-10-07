@@ -1,16 +1,8 @@
 # dependencies
-CSON = require 'cson'
-async = require 'async'
-coffeelint = require 'coffeelint'
+
 fs = require 'fs'
-mkdirp = require 'mkdirp'
 async = require 'async'
-mongofb = require 'mongofb'
-ncp = require('ncp').ncp
-open = require 'open'
 optimist = require 'optimist'
-path = require 'path'
-readline = require 'readline'
 log = console.log
 
 # usage
@@ -56,7 +48,6 @@ writeToLine = (file, line_str, line_num) =>
     if "#{data.length-1}" !=line_number
       end_line = '\n'
     file_str+="#{line}#{end_line}"
-  console.log file_str
   fs.writeFileSync(file, file_str, 'utf8')
 
 alphabetize = (data) =>
@@ -66,10 +57,9 @@ alphabetize = (data) =>
     a.length is b.length and a.every (elem, i) -> elem is b[i]
   return not arrayEqual(old_data,data)
 
-prependStri = (args, str) =>
-
 getFiles = (args, next) =>
   type = ''
+  return next([]) unless args.length
   fs.stat args[0], (err, stats) =>
     if err
       console.log err
@@ -101,13 +91,14 @@ processData = (command,args,next) =>
             for file_name, file of data
               for tag, attribute_info of file
                 if (alphabetize(attribute_info.attributes))
-                  return_data = {
-                    line_number: attribute_info.line
+                  return_data ?= {
                     alphabetized: false
+                    infractions: []
+                  }
+                  return_data.infractions.push {
+                    line_number: attribute_info.line
                     file_name
                   }
-                  next(return_data,{is_json:true})
-                  return
             return_data ?= {
               alphabetized: true
             }
@@ -124,6 +115,17 @@ processData = (command,args,next) =>
                     writeToLine(file_name,"#{spaces}#{attr}",line)
 
         when 'convertStyleToJson'
+          # a,b  d,c
+          #a.d, a.c , b.d, b.c
+          join = (data_1, data_2) =>
+            arr_1 = data_1.split(',')
+            arr_2 = data_2.split(',')
+            str = []
+            for arg1 in arr_1
+              for arg2 in arr_2
+                str.push("#{arg1.trim()} #{arg2.trim()}")
+            return str.join(', ')
+
           total_return = {}
           processed = 0
 
@@ -151,7 +153,7 @@ processData = (command,args,next) =>
                     space_check = 0
 
                   if getPreSpaces(line) > getPreSpaces(tag)
-                    tag += " #{line.trim()}"
+                    tag = join(tag, line.trim())
                   else
                     tag = line
 
