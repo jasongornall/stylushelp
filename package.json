@@ -20,7 +20,7 @@
       "bin": "./bin"
   },
   "keywords": "stylus, stylus help",
-  "name": "style-helper",
+  "name": "stylus-help",
   "preferGlobal": true,
   "repository": {
       "type": "git",
