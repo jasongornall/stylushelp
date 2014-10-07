@@ -245,3 +245,5 @@ processData command, args, (value, options)=>
     value = JSON.stringify(value,null,3)
 
   console.log value
+
+exports.processData = processData;
