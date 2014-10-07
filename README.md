@@ -54,6 +54,135 @@ After Execution
     .apple
       z-index 31
   ```
+  
+### inspectZValues
+  Returns a json structure showing the ordering of z indexes
+  
+  sample call 
+  ```
+  stylus-help inspectZValues testing/
+  ```
+  
+  Return sample.. This shows the z-index in order and the files they are used in
+  ```json
+  {
+   "1": [
+      "testing/test2.styl"
+   ],
+   "11": [
+      "testing/test.styl"
+   ],
+   "21": [
+      "testing/test.styl"
+   ],
+   "31": [
+      "testing/test2.styl"
+   ],
+   "41": [
+      "testing/test.styl"
+   ]
+}
+  ```
+### checkAlphabetized
+  Returns a json structure with a true or false and a line number showing where the non alphabetized attribute starts
+  
+  sample call 
+  ```
+  stylus-help checkAlphabetized testing/test.styl
+  ```
+
+ Sample File
+ ```
+ .left
+    div
+      z-index 41
+      display block
+      position relative
+      left 50px
+    div
+      right 100px
+      position absolute
+  a
+    z-index 21
+    margin-left 2px
+  .panda
+    .test
+      z-index 11
+
+ ```
+ 
+ 
+ Return sample for a non alphabetized file
+  ```json
+  {
+   "alphabetized": false,
+   "infractions": [
+      {
+         "line_number": 3,
+         "file_name": "testing/test.styl"
+      },
+      {
+         "line_number": 8,
+         "file_name": "testing/test.styl"
+      },
+      {
+         "line_number": 11,
+         "file_name": "testing/test.styl"
+      }
+   ]
+  }
+  ```
+  
+### alphabetizeStyle
+  Returns a json structure with a true or false and a line number showing where the non alphabetized attribute starts
+  
+  sample call 
+  ```
+  stylus-help alphabetizeStyle testing/test.styl
+  ```
+
+ Sample File
+ ```
+ .left
+    div
+      z-index 41
+      display block
+      position relative
+      left 50px
+    div
+      right 100px
+      position absolute
+  a
+    z-index 21
+    margin-left 2px
+  .panda
+    .test
+      z-index 11
+
+ ```
+ 
+ 
+ Modifications after execution
+  ```
+  .left
+    div
+      display block
+      left 50px
+      position relative
+      z-index 41
+    div
+      position absolute
+      right 100px
+  a
+    margin-left 2px
+    z-index 21
+  .panda
+    .test
+      z-index 11
+
+  ```
+  
+  
 
   
   
