@@ -240,9 +240,9 @@ processData = (command,args,next) =>
 # Support for command line stuff
 if (/stylus-help/.test module?.parent?.filename)
   processData command, args, (value, options)=>
-  if options?.is_json
-    value = JSON.stringify(value,null,3)
-  console.log value
+    if options?.is_json
+      value = JSON.stringify(value,null,3)
+    console.log value
 
 # support for require
 exports.processData = processData
