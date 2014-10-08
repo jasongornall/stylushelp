@@ -5,7 +5,7 @@ This is a package designed to assist with common problems and allow for stylus t
 Install
   npm install -g stylus-help
   
-Functions
+Functions for command line
   ```
   stylus-help normalizeZvalues <path to stylus dir or file>, [value to normalize on defaults to 10]
   stylus-help inspectZValues <path to stylus dir or file>
@@ -13,6 +13,16 @@ Functions
   stylus-help checkAlphabetized <path to stylus dir or file>
   stylus-help alphabetizeStyle <path to stylus dir or file>
   ```
+Functions as a npm package (same returns)
+```coffeescript
+  stylus_help = require 'stylus-help'
+  
+  stylus_help.processData 'normalizeZvalues', [filename1,filename2], (data) ->
+  stylus_help.processData 'inspectZValues', [filename1,filename2], (data) ->
+  stylus_help.processData 'convertStyleToJson', [filename1,filename2], (data) ->
+  stylus_help.processData 'checkAlphabetized', [filename1,filename2], (data) ->
+  stylus_help.processData 'alphabetizeStyle', [filename1,filename2], (data) ->
+```
 ### normalizeZvalues
   Takes a directory (not recursive) and goes through and normalizes z-index across the files... It automatically uses a buffer of 10 between z-index values. You can manually specify a buffer if you want to only have a space of 3,4 between values
   
