@@ -13,7 +13,7 @@ Functions for command line
   stylus-help checkAlphabetized <path to stylus dir or file>
   stylus-help alphabetizeStyle <path to stylus dir or file>
   ```
-Functions as a npm package (same returns)
+Functions as a npm package (same returns)<coffeescript>
 ```coffeescript
   stylus_help = require 'stylus-help'
   
