@@ -238,7 +238,7 @@ processData = (command,args,next) =>
 
 
 # Support for command line stuff
-if command and require.main == module
+if (/stylus-help/.test module?.parent?.filename)
   processData command, args, (value, options)=>
   if options?.is_json
     value = JSON.stringify(value,null,3)
