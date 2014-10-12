@@ -30,13 +30,7 @@ log = (msg) ->
   console.log msg
 
 getPreSpaces = (str) ->
-  space_check = 0
-  for c in str
-    if c ==' '
-      space_check++
-    else
-      return space_check
-  return space_check
+  return str.match(/^(\s)*/)[0].length
 
 writeToLine = (file, line_str, line_num) =>
   file_str = ''
@@ -225,8 +219,6 @@ processData = (command,args,next) =>
                 buf = buf.replace reg, "z-index #{count}\n"
                 fs.writeFileSync("#{file}", buf, 'utf8')
 
-
-
             count += breathing_room
           processData 'inspectZValues', args, (filesTotal) =>
             next(filesTotal,{is_json:true})
@@ -234,8 +226,6 @@ processData = (command,args,next) =>
       else
         log "invalid command #{command}"
         exit USAGE
-
-
 
 # Support for command line stuff
 if (/stylus-help/.test module?.parent?.filename)
