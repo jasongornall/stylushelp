@@ -78,6 +78,79 @@ getFiles = (args, next) =>
 processData = (command,args,next) =>
   getFiles args, (read_files) =>
     switch command
+      when 'simple_lint'
+        errors= []
+        addError = (msg, line, line_num) =>
+          errors.push {
+            message: msg
+            line: line
+            line_num
+          }
+        checkSpaces = (next_parallel) =>
+          async.each read_files, ((file, data_next) =>
+            if not (/.styl/.test(file))
+              data_next()
+              return
+            fs.readFile file,'utf8', (err, data) ->
+              data = data.split('\n');
+              for line, line_num in data
+                spaces = getPreSpaces(line)
+                if (spaces % 2) isnt 0
+                  addError "Bad spacing! with #{spaces} spaces", line, (line_num + 1)
+
+                check_1 = /\/\//.test line
+                check_2 =  /\/\/\s/.test line
+                if check_1 and !check_2
+                  addError "// must have a space after", line, (line_num + 1)
+
+              data_next()
+
+          ), (err) ->
+            next_parallel()
+
+        OtherChecks = (next_parallel) =>
+          processData 'convertStyleToJson',args, (data) =>
+            stylus_stags = []
+            total_tags = {}
+            for file_name, file of data
+              for tag, attribute_info of file
+                console.log tag,'tag'
+                total_tags[tag]?= []
+                total_tags[tag].push ('sdadsadsa')
+
+                for attribute, key in attribute_info.attributes
+
+                  if /;|:/.test attribute
+                    addError "No ; or : in stylus file!", attribute, (attribute_info.line + key)
+
+                  check_1 = /,/.test attribute
+                  check_2 =  /,\s/.test attribute
+                  if check_1 and !check_2
+                    addError ", must have a space after", attribute, (attribute_info.line + key)
+            for tag, arr of total_tags
+              if arr.length > 1
+                lines = arr.join ','
+                addError "Duplicate tags found.. please solidate at lines #{lines}", tag, lines.length -1
+            console.log (JSON.stringify total_tags,null,3)
+            next_parallel()
+
+        alphabetizeCheck = (next_parallel) =>
+          processData 'checkAlphabetized',args, (return_data) =>
+            return_data.infractions ?= []
+            for infraction, key in return_data.infractions
+              addError "non alphabetized sectiom", infraction.line, infraction.line_number
+
+            next_parallel()
+
+
+
+        async.parallel [
+          checkSpaces,
+          OtherChecks,
+          alphabetizeCheck
+        ], (err) ->
+          console.log errors
+
       when 'checkAlphabetized'
         return_data = null
         processData 'convertStyleToJson',args, (data) =>
@@ -89,7 +162,8 @@ processData = (command,args,next) =>
                   infractions: []
                 }
                 return_data.infractions.push {
-                  line_number: attribute_info.line
+                  line_number: tag
+                  line: attribute_info.attributes[0]
                   file_name
                 }
           return_data ?= {
@@ -99,12 +173,12 @@ processData = (command,args,next) =>
       when 'alphabetizeStyle'
         processData 'convertStyleToJson',args, (data) =>
           for file_name, file of data
-            for tag, attribute_info of file
+            for index, attribute_info of file
               if (alphabetize(attribute_info.attributes))
                 space_num = attribute_info.space_check
                 spaces = Array(parseInt(space_num+1)).join ' '
-                for line_num,attr of attribute_info.attributes
-                  line = parseInt attribute_info.line + parseInt line_num
+                for attr, line_num in attribute_info.attributes
+                  line = parseInt(index,10) + parseInt(line_num,10)
                   writeToLine(file_name,"#{spaces}#{attr}",line)
 
       when 'convertStyleToJson'
@@ -139,8 +213,9 @@ processData = (command,args,next) =>
                 tagFound = true
 
                 if attributeSet.length
-                  obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
-                  obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
+                  line_number = parseInt(line_num, 10)+1 - attributeSet.length
+                  obj[line_number]= {space_check,attributes:attributeSet}
+                  obj[line_number].tag = tag.trim()
 
                   attributeSet = []
                   space_check = 0
@@ -161,9 +236,9 @@ processData = (command,args,next) =>
                 if space_check == pre_spaces
                   attributeSet.push("#{line.trim()}")
                 else
-                  obj["#{tag.trim()}"]= {space_check,attributes:attributeSet}
-                  obj["#{tag.trim()}"].line = parseInt(line_num, 10)+1 - attributeSet.length
-
+                  line_number = parseInt(line_num, 10) - attributeSet.length
+                  obj[line_number]= {space_check,attributes:attributeSet}
+                  obj[line_number].tag = tag.trim()
                   tag = ''
                   attributeSet = []
                   space_check = 0
@@ -228,7 +303,7 @@ processData = (command,args,next) =>
         exit USAGE
 
 # Support for command line stuff
-if (/stylus-help/.test module?.parent?.filename)
+if (true)
   processData command, args, (value, options)=>
     if options?.is_json
       value = JSON.stringify(value,null,3)
