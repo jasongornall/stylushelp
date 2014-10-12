@@ -47,7 +47,7 @@ writeToLine = (file, line_str, line_num) =>
 
 alphabetize = (data) =>
   old_data = data.slice(0)
-  data.sort (a, b) -> if a > b then 1 else -1
+  data.sort()
   arrayEqual = (a, b) ->
     a.length is b.length and a.every (elem, i) -> elem is b[i]
   return not arrayEqual(old_data,data)
