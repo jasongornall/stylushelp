@@ -3,8 +3,11 @@
 fs = require 'fs'
 async = require 'async'
 optimist = require 'optimist'
+path = require 'path'
+
 log = console.log
-valid_selectors = JSON.parse (fs.readFileSync 'valid_selectors.json', 'utf8')
+filePath = path.join(__dirname, 'valid_selectors.json');
+valid_selectors = JSON.parse (fs.readFileSync filePath, 'utf8')
 
 # usage
 USAGE = """
