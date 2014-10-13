@@ -10,10 +10,12 @@ USAGE = """
 Usage: styler <command> [command-specific-options]
 
 where <command> [command-specific-options] is one of:
-  normalizeZvalues <path to stylus dir or file>, [value to normalize on]
-  inspectZValues <path to stylus dir or file>
-  convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
+  alphabetizeStyle <path to stylus dir or file>
   checkAlphabetized <path to stylus dir or file>
+  convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
+  inspectZValues <path to stylus dir or file>
+  normalizeZvalues <path to stylus dir or file>, [value to normalize on]
+  simple_lint <path to stylus dir or file>
 """
 
 # get arguments and options (used for command line executions)
@@ -76,7 +78,7 @@ getFiles = (args, next) =>
 
 # COMMAND LINE STUFF
 processData = (command,args,next) =>
-  config = args[2]
+  config = args[1]
   config ?= {
     bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
     comment_space: '// must have a space after' #
@@ -179,7 +181,7 @@ processData = (command,args,next) =>
           postJsonChecks,
           alphabetizeCheck
         ], (err) ->
-          console.log errors
+          console.log JSON.stringify(errors , null, 3)
 
       when 'checkAlphabetized'
         return_data = null
@@ -333,7 +335,7 @@ processData = (command,args,next) =>
         exit USAGE
 
 # Support for command line stuff
-if (/stylus-help/.test module?.parent?.filename)
+if (true)
   processData command, args, (value, options)=>
     if options?.is_json
       value = JSON.stringify(value,null,3)
