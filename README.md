@@ -366,32 +366,37 @@ underline()
   gives this output..
   ```
   [
-     {
-        "message": "Don't need px on 0 values",
-        "line": "    padding 0px 5px",
-        "line_num": 6
-     },
-     {
-        "message": "Don't need px on 0 values",
-        "line": "  box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
-        "line_num": 14
-     },
-     {
-        "message": "Don't need px on 0 values",
-        "line": "        margin-left 10px",
-        "line_num": 28
-     },
-     {
-        "message": "This area needs to be alphabetized",
-        "line": "border-bottom 4px solid rgba($color, 0)",
-        "line_num": "3"
-     },
-     {
-        "message": "This area needs to be alphabetized",
-        "line": "border-top 1px solid $background_color",
-        "line_num": "12"
-     }
-  ]
+   {
+      "message": "Don't need px on 0 values",
+      "line": "    padding 0px 5px",
+      "line_num": 6
+   },
+   {
+      "message": "Don't need px on 0 values",
+      "line": "  box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
+      "line_num": 14
+   },
+   {
+      "message": "Don't need px on 0 values",
+      "line": "        margin-left 10px",
+      "line_num": 28
+   },
+   {
+      "message": "Invalid Attribute!",
+      "line": "overflow panda",
+      "line_num": 5
+   },
+   {
+      "message": "This area needs to be alphabetized",
+      "line": "border-bottom 4px solid rgba($color, 0)",
+      "line_num": "3"
+   },
+   {
+      "message": "This area needs to be alphabetized",
+      "line": "border-top 1px solid $background_color",
+      "line_num": "12"
+   }
+]
   ```
 ####style_attribute_check
  makes use of a JSON file to validate common key/value mixups
