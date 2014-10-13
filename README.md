@@ -238,8 +238,8 @@ underline()
  Json Conversion Note the space_check is exactly how many spaces to write if you want to modify and line is where the attributes start. line-1 is the style header
   ```json
 {
-   "testing/test.styl": {
-      "&:not(.signup):not(.background)": {
+   "../testing/test.styl": {
+      "3": {
          "space_check": 4,
          "attributes": [
             "box-sizing border-box",
@@ -247,17 +247,17 @@ underline()
             "cursor pointer",
             "padding 0px 5px"
          ],
-         "line": 3
+         "tag": "&:not(.signup):not(.background)"
       },
-      "&:not(.signup):not(.background) &:hover": {
+      "7": {
          "space_check": 6,
          "attributes": [
             "background rgba($frame_background_color, .4)",
             "border-bottom 4px solid $color"
          ],
-         "line": 8
+         "tag": "&:not(.signup):not(.background) &:hover"
       },
-      ".exports.region": {
+      "12": {
          "space_check": 2,
          "attributes": [
             "border-top 1px solid $background_color",
@@ -273,21 +273,21 @@ underline()
             "transition all .2s ease-in",
             "z-index 16"
          ],
-         "line": 12
+         "tag": ".exports.region"
       },
-      ".exports.region .newsletter.custom_text > a i, .exports.region .newsletter.custom_text > a span": {
+      "26": {
          "space_check": 6,
          "attributes": [
             "color $footer_text_color"
          ],
-         "line": 26
+         "tag": ".exports.region .newsletter.custom_text > a i, .exports.region .newsletter.custom_text > a span"
       },
-      ".exports.region .newsletter.custom_text > a i div, .exports.region .newsletter.custom_text > a i a, .exports.region .newsletter.custom_text > a i iframe, .exports.region .newsletter.custom_text > a span div, .exports.region .newsletter.custom_text > a span a, .exports.region .newsletter.custom_text > a span iframe": {
+      "27": {
          "space_check": 8,
          "attributes": [
             "margin-left 10px"
          ],
-         "line": 28
+         "tag": ".exports.region .newsletter.custom_text > a i div, .exports.region .newsletter.custom_text > a i a, .exports.region .newsletter.custom_text > a i iframe, .exports.region .newsletter.custom_text > a span div, .exports.region .newsletter.custom_text > a span a, .exports.region .newsletter.custom_text > a span iframe"
       }
    }
 }
