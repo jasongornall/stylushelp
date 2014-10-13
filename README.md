@@ -293,7 +293,7 @@ underline()
 }
 
   ```
-  ### simple_lint
+### simple lint
   This utilized the existing functions in this package to do a basic lint on the stylus file.
   
   A sample call using the plugin
