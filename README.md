@@ -338,12 +338,13 @@ underline()
       box-sizing border-box
       border-bottom 4px solid rgba($color, 0)
       cursor pointer
+      overflow panda
       padding 0px 5px
       &:hover
         background rgba($frame_background_color, .4)
         border-bottom 4px solid $color
   
-  .exports.region
+    .exports.region
     border-top 1px solid $background_color
     bottom 0
     box-shadow 0px 0px 20px rgba(0, 0, 0, .4)
