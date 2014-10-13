@@ -121,19 +121,14 @@ processData = (command,args,next) =>
 
                 # comment_space
                 if config?.comment_space
-                  check_1 = /\/\//.test line
+                  check_1 = /^\s*\/\//.test line
                   check_2 =  /\/\/\s/.test line
                   if check_1 and !check_2
                     addError config?.comment_space, line, (line_num + 1)
 
-                # star_selector
-                if config.star_selector
-                  if /\*/.test line
-                    addError config.star_selector, line, (line_num + 1)
-
                 # zero_px
                 if config.zero_px
-                  if /0px/.test line
+                  if /\s0px/.test line
                     addError config.zero_px, line, (line_num + 1)
 
               data_next()
@@ -147,6 +142,8 @@ processData = (command,args,next) =>
             total_tags = {}
             for file_name, file of data
               for line_num, attribute_info of file
+                if attribute_info.tag == ''
+                  continue
                 line = parseInt(line_num, 10)
                 total_tags[attribute_info.tag]?= []
                 total_tags[attribute_info.tag].push (line - 1)
@@ -159,11 +156,17 @@ processData = (command,args,next) =>
                       if pair[1] not in valid_selectors[pair[0]]
                         addError config.style_attribute_check, attribute, (line + key)
 
+                   # star_selector
+                  if config.star_selector
+                    if /\*/.test attribute
+                      addError config.star_selector, attribute, (line + key)
+
                   if config.no_colon_semicolon
                     if /;|:/.test attribute
                       addError config.no_colon_semicolon, attribute, (line + key)
                     check_1 = /,/.test attribute
                     check_2 =  /,\s/.test attribute
+
                   if config.comma_space
                     if check_1 and !check_2
                       addError config.comma_space, attribute, (line + key)
@@ -172,7 +175,8 @@ processData = (command,args,next) =>
               for tag, arr of total_tags
                 if arr.length > 1
                   lines = arr.join ','
-                  addError config.dupe_tag_check, tag, arr[0]
+                  for dupe, index in arr
+                    addError config.dupe_tag_check, tag, dupe
             next_parallel()
 
         alphabetizeCheck = (next_parallel) =>
@@ -182,6 +186,8 @@ processData = (command,args,next) =>
               for infraction, key in return_data.infractions
                 addError config.alphabetize_check, infraction.line, infraction.line_number
               next_parallel()
+          else
+            next_parallel()
 
         async.waterfall [
           preJsonChecks,
@@ -247,6 +253,8 @@ processData = (command,args,next) =>
             tag = ''
             space_check = 0
             for line_num, line of data
+              if line.match(/^\s*$/)
+                continue
               if line.match(/((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/)
                 tagFound = true
 

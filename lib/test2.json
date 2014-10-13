@@ -1,0 +1,24 @@
+//custom padding null
+.hub.object.show-padding null
+  > .channels > ul > li.channel, > .channels > ul > li.interstitial null
+    > .content null
+      padding-right 360px null
+  > .channels > ul > li.channel > .content > .relative null
+    > .container null
+      &.fullscreen null
+        bottom unit(66, 'px') null
+        height auto null
+        left 30px null
+        margin-left 0px null
+        margin-top 0px null
+        right 30px null
+        top 94px null
+        width auto null
+        .footer_buttons null
+          bottom -21px null
+ null
+      > .footer null
+        bottom -54px null
+        border 10px solid $background_color null
+ null
+[]
