@@ -303,14 +303,14 @@ underline()
   this by default will run every check, however if you use this plugin yourself you can specify a config file with what to check for
   ```json
   {
-    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
-    comment_space: '// must have a space after' #
-    star_selector: '* is HORRIBLE performance please use a different selector'
-    zero_px: 'Don\'t need px on 0 values' #
-    no_colon_semicolon: 'No ; or : in stylus file!' #
-    comma_space: ', must have a space after' #
-    alphabetize_check: 'This area needs to be alphabetized'
-    dupe_tag_check: 'Duplicate tags found.. please consolidate'
+    "bad_space_check": "Bad spacing! should me a multiple of 2 spaces",
+    "comment_space": "// must have a space after",
+    "star_selector": "* is HORRIBLE performance please use a different selector",
+    "zero_px": "Don't need px on 0 values",
+    "no_colon_semicolon": "No ; or : in stylus file!",
+    "comma_space": ", must have a space after",
+    "alphabetize_check": "This area needs to be alphabetized",
+    "dupe_tag_check": "Duplicate tags found.. please consolidate"
   }
   ```
   call sample looks like this
@@ -324,6 +324,7 @@ underline()
     comma_space: ', must have a space after' #
     alphabetize_check: 'This area needs to be alphabetized'
     dupe_tag_check: 'Duplicate tags found.. please consolidate'
+    style_attribute_check: 'Invalid Attribute!'
   }
   stylus_help.processData 'simple_lint', [directory/file, data], (data) ->
     JSON.stringify(data,null)
@@ -337,12 +338,13 @@ underline()
       box-sizing border-box
       border-bottom 4px solid rgba($color, 0)
       cursor pointer
+      overflow panda
       padding 0px 5px
       &:hover
         background rgba($frame_background_color, .4)
         border-bottom 4px solid $color
   
-  .exports.region
+    .exports.region
     border-top 1px solid $background_color
     bottom 0
     box-shadow 0px 0px 20px rgba(0, 0, 0, .4)
@@ -365,34 +367,40 @@ underline()
   gives this output..
   ```
   [
-     {
-        "message": "Don't need px on 0 values",
-        "line": "    padding 0px 5px",
-        "line_num": 6
-     },
-     {
-        "message": "Don't need px on 0 values",
-        "line": "  box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
-        "line_num": 14
-     },
-     {
-        "message": "Don't need px on 0 values",
-        "line": "        margin-left 10px",
-        "line_num": 28
-     },
-     {
-        "message": "This area needs to be alphabetized",
-        "line": "border-bottom 4px solid rgba($color, 0)",
-        "line_num": "3"
-     },
-     {
-        "message": "This area needs to be alphabetized",
-        "line": "border-top 1px solid $background_color",
-        "line_num": "12"
-     }
-  ]
+   {
+      "message": "Don't need px on 0 values",
+      "line": "    padding 0px 5px",
+      "line_num": 6
+   },
+   {
+      "message": "Don't need px on 0 values",
+      "line": "  box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
+      "line_num": 14
+   },
+   {
+      "message": "Don't need px on 0 values",
+      "line": "        margin-left 10px",
+      "line_num": 28
+   },
+   {
+      "message": "Invalid Attribute!",
+      "line": "overflow panda",
+      "line_num": 5
+   },
+   {
+      "message": "This area needs to be alphabetized",
+      "line": "border-bottom 4px solid rgba($color, 0)",
+      "line_num": "3"
+   },
+   {
+      "message": "This area needs to be alphabetized",
+      "line": "border-top 1px solid $background_color",
+      "line_num": "12"
+   }
+]
   ```
-   
+####style_attribute_check
+ makes use of a JSON file to validate common key/value mixups
   
   
 
