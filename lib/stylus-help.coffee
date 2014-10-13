@@ -76,6 +76,20 @@ getFiles = (args, next) =>
 
 # COMMAND LINE STUFF
 processData = (command,args,next) =>
+  config = args[2]
+  config ?= {
+    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
+    comment_space: '// must have a space after' #
+    star_selector: '* is HORRIBLE performance please use a different selector'
+    zero_px: 'Don\'t need px on 0 values' #
+    no_colon_semicolon: 'No ; or : in stylus file!' #
+    comma_space: ', must have a space after' #
+    alphabetize_check: 'This area needs to be alphabetized'
+    dupe_tag_check: 'Duplicate tags found.. please consolidate'
+  }
+
+
+
   getFiles args, (read_files) =>
     switch command
       when 'simple_lint'
@@ -86,7 +100,7 @@ processData = (command,args,next) =>
             line: line
             line_num
           }
-        checkSpaces = (next_parallel) =>
+        preJsonChecks = (next_parallel) =>
           async.each read_files, ((file, data_next) =>
             if not (/.styl/.test(file))
               data_next()
@@ -94,59 +108,75 @@ processData = (command,args,next) =>
             fs.readFile file,'utf8', (err, data) ->
               data = data.split('\n');
               for line, line_num in data
-                spaces = getPreSpaces(line)
-                if (spaces % 2) isnt 0
-                  addError "Bad spacing! with #{spaces} spaces", line, (line_num + 1)
 
-                check_1 = /\/\//.test line
-                check_2 =  /\/\/\s/.test line
-                if check_1 and !check_2
-                  addError "// must have a space after", line, (line_num + 1)
+                # bad_space_check
+                if config.bad_space_check
+                  spaces = getPreSpaces(line)
+                  if (spaces % 2) isnt 0
+                    addError config?.bad_space_check, line, (line_num + 1)
+
+                # comment_space
+                if config?.comment_space
+                  check_1 = /\/\//.test line
+                  check_2 =  /\/\/\s/.test line
+                  if check_1 and !check_2
+                    addError config?.comment_space, line, (line_num + 1)
+
+                # star_selector
+                if config.star_selector
+                  if /\*/.test line
+                    addError config.star_selector, line, (line_num + 1)
+
+                # zero_px
+                if config.zero_px
+                  if /0px/.test line
+                    addError config.zero_px, line, (line_num + 1)
 
               data_next()
 
           ), (err) ->
             next_parallel()
 
-        OtherChecks = (next_parallel) =>
+        postJsonChecks = (next_parallel) =>
           processData 'convertStyleToJson',args, (data) =>
             stylus_stags = []
             total_tags = {}
             for file_name, file of data
-              for tag, attribute_info of file
-                console.log tag,'tag'
-                total_tags[tag]?= []
-                total_tags[tag].push ('sdadsadsa')
+              for line_num, attribute_info of file
+                line = parseInt(line_num, 10)
+                total_tags[attribute_info.tag]?= []
+                total_tags[attribute_info.tag].push (line - 1)
 
                 for attribute, key in attribute_info.attributes
+                  if config.no_colon_semicolon
+                    if /;|:/.test attribute
+                      addError "No ; or : in stylus file!", attribute, (line + key)
+                    check_1 = /,/.test attribute
+                    check_2 =  /,\s/.test attribute
+                  if config.comma_space
+                    if check_1 and !check_2
+                      addError ", must have a space after", attribute, (line + key)
 
-                  if /;|:/.test attribute
-                    addError "No ; or : in stylus file!", attribute, (attribute_info.line + key)
-
-                  check_1 = /,/.test attribute
-                  check_2 =  /,\s/.test attribute
-                  if check_1 and !check_2
-                    addError ", must have a space after", attribute, (attribute_info.line + key)
-            for tag, arr of total_tags
-              if arr.length > 1
-                lines = arr.join ','
-                addError "Duplicate tags found.. please solidate at lines #{lines}", tag, lines.length -1
-            console.log (JSON.stringify total_tags,null,3)
+            if config.dupe_tag_check
+              for tag, arr of total_tags
+                if arr.length > 1
+                  lines = arr.join ','
+                  addError config.dupe_tag_check, tag, arr[0]
             next_parallel()
 
         alphabetizeCheck = (next_parallel) =>
-          processData 'checkAlphabetized',args, (return_data) =>
-            return_data.infractions ?= []
-            for infraction, key in return_data.infractions
-              addError "non alphabetized sectiom", infraction.line, infraction.line_number
+          if config.alphabetize_check
+            processData 'checkAlphabetized',args, (return_data) =>
+              return_data.infractions ?= []
+              for infraction, key in return_data.infractions
+                addError config.alphabetize_check, infraction.line, infraction.line_number
+              next_parallel()
 
-            next_parallel()
 
 
-
-        async.parallel [
-          checkSpaces,
-          OtherChecks,
+        async.waterfall [
+          preJsonChecks,
+          postJsonChecks,
           alphabetizeCheck
         ], (err) ->
           console.log errors
