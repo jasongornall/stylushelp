@@ -64,7 +64,7 @@ getFiles = (args, next) =>
       type = 'directory'
       read_files = fs.readdirSync args[0]
       for key, val of read_files
-        read_files[key] = args[0]+read_files[key]
+        read_files[key] = args[0] + read_files[key]
 
     else if stats.isFile()
       type = 'file'
@@ -333,7 +333,7 @@ processData = (command,args,next) =>
         exit USAGE
 
 # Support for command line stuff
-if (true)
+if (/stylus-help/.test module?.parent?.filename)
   processData command, args, (value, options)=>
     if options?.is_json
       value = JSON.stringify(value,null,3)
