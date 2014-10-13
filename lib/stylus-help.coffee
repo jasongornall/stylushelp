@@ -4,6 +4,7 @@ fs = require 'fs'
 async = require 'async'
 optimist = require 'optimist'
 log = console.log
+valid_selectors = JSON.parse (fs.readFileSync 'valid_selectors.json', 'utf8')
 
 # usage
 USAGE = """
@@ -88,6 +89,7 @@ processData = (command,args,next) =>
     comma_space: ', must have a space after' #
     alphabetize_check: 'This area needs to be alphabetized'
     dupe_tag_check: 'Duplicate tags found.. please consolidate'
+    style_attribute_check: 'Invalid Attribute!'
   }
 
 
@@ -150,14 +152,21 @@ processData = (command,args,next) =>
                 total_tags[attribute_info.tag].push (line - 1)
 
                 for attribute, key in attribute_info.attributes
+                  if config.style_attribute_check
+                    att = attribute.trim()
+                    pair = att.split(' ')
+                    if pair?.length == 2 and valid_selectors[pair[0]]
+                      if pair[1] not in valid_selectors[pair[0]]
+                        addError config.style_attribute_check, attribute, (line + key)
+
                   if config.no_colon_semicolon
                     if /;|:/.test attribute
-                      addError "No ; or : in stylus file!", attribute, (line + key)
+                      addError config.no_colon_semicolon, attribute, (line + key)
                     check_1 = /,/.test attribute
                     check_2 =  /,\s/.test attribute
                   if config.comma_space
                     if check_1 and !check_2
-                      addError ", must have a space after", attribute, (line + key)
+                      addError config.comma_space, attribute, (line + key)
 
             if config.dupe_tag_check
               for tag, arr of total_tags
@@ -174,15 +183,12 @@ processData = (command,args,next) =>
                 addError config.alphabetize_check, infraction.line, infraction.line_number
               next_parallel()
 
-
-
         async.waterfall [
           preJsonChecks,
           postJsonChecks,
           alphabetizeCheck
         ], (err) ->
-          console.log JSON.stringify(errors , null, 3)
-
+          next(errors, {is_json:true})
       when 'checkAlphabetized'
         return_data = null
         processData 'convertStyleToJson',args, (data) =>
