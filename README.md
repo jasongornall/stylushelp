@@ -12,16 +12,18 @@ Functions for command line
   stylus-help convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
   stylus-help checkAlphabetized <path to stylus dir or file>
   stylus-help alphabetizeStyle <path to stylus dir or file>
+  stylus-help simple_lint <path to stylus dir or file>
   ```
 Functions as a npm package (same returns)<coffeescript>
 ```coffeescript
   stylus_help = require 'stylus-help'
   
-  stylus_help.processData 'normalizeZvalues', [filename1,filename2], (data) ->
-  stylus_help.processData 'inspectZValues', [filename1,filename2], (data) ->
-  stylus_help.processData 'convertStyleToJson', [filename1,filename2], (data) ->
-  stylus_help.processData 'checkAlphabetized', [filename1,filename2], (data) ->
-  stylus_help.processData 'alphabetizeStyle', [filename1,filename2], (data) ->
+  stylus_help.processData 'normalizeZvalues', [directory/file], (data) ->
+  stylus_help.processData 'inspectZValues', [directory/file], (data) ->
+  stylus_help.processData 'convertStyleToJson', [directory/file], (data) ->
+  stylus_help.processData 'checkAlphabetized', [directory/file], (data) ->
+  stylus_help.processData 'alphabetizeStyle', [directory/file], (data) ->
+  stylus_help.processData 'simple_lint', [directory/file, config_data], (data) ->
 ```
 ### normalizeZvalues
   Takes a directory (not recursive) and goes through and normalizes z-index across the files... It automatically uses a buffer of 10 between z-index values. You can manually specify a buffer if you want to only have a space of 3,4 between values
@@ -236,8 +238,8 @@ underline()
  Json Conversion Note the space_check is exactly how many spaces to write if you want to modify and line is where the attributes start. line-1 is the style header
   ```json
 {
-   "testing/test.styl": {
-      "&:not(.signup):not(.background)": {
+   "../testing/test.styl": {
+      "3": {
          "space_check": 4,
          "attributes": [
             "box-sizing border-box",
@@ -245,17 +247,17 @@ underline()
             "cursor pointer",
             "padding 0px 5px"
          ],
-         "line": 3
+         "tag": "&:not(.signup):not(.background)"
       },
-      "&:not(.signup):not(.background) &:hover": {
+      "7": {
          "space_check": 6,
          "attributes": [
             "background rgba($frame_background_color, .4)",
             "border-bottom 4px solid $color"
          ],
-         "line": 8
+         "tag": "&:not(.signup):not(.background) &:hover"
       },
-      ".exports.region": {
+      "12": {
          "space_check": 2,
          "attributes": [
             "border-top 1px solid $background_color",
@@ -271,26 +273,127 @@ underline()
             "transition all .2s ease-in",
             "z-index 16"
          ],
-         "line": 12
+         "tag": ".exports.region"
       },
-      ".exports.region .newsletter.custom_text > a i, .exports.region .newsletter.custom_text > a span": {
+      "26": {
          "space_check": 6,
          "attributes": [
             "color $footer_text_color"
          ],
-         "line": 26
+         "tag": ".exports.region .newsletter.custom_text > a i, .exports.region .newsletter.custom_text > a span"
       },
-      ".exports.region .newsletter.custom_text > a i div, .exports.region .newsletter.custom_text > a i a, .exports.region .newsletter.custom_text > a i iframe, .exports.region .newsletter.custom_text > a span div, .exports.region .newsletter.custom_text > a span a, .exports.region .newsletter.custom_text > a span iframe": {
+      "27": {
          "space_check": 8,
          "attributes": [
             "margin-left 10px"
          ],
-         "line": 28
+         "tag": ".exports.region .newsletter.custom_text > a i div, .exports.region .newsletter.custom_text > a i a, .exports.region .newsletter.custom_text > a i iframe, .exports.region .newsletter.custom_text > a span div, .exports.region .newsletter.custom_text > a span a, .exports.region .newsletter.custom_text > a span iframe"
       }
    }
 }
 
   ```
+### simple lint
+  This utilized the existing functions in this package to do a basic lint on the stylus file.
+  
+  A sample call using the plugin
+  ```
+   stylus-help simple_lint <path to stylus dir or file>
+  ```
+  this by default will run every check, however if you use this plugin yourself you can specify a config file with what to check for
+  ```json
+  {
+    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
+    comment_space: '// must have a space after' #
+    star_selector: '* is HORRIBLE performance please use a different selector'
+    zero_px: 'Don\'t need px on 0 values' #
+    no_colon_semicolon: 'No ; or : in stylus file!' #
+    comma_space: ', must have a space after' #
+    alphabetize_check: 'This area needs to be alphabetized'
+    dupe_tag_check: 'Duplicate tags found.. please consolidate'
+  }
+  ```
+  call sample looks like this
+  ```
+  data =  {
+    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
+    comment_space: '// must have a space after' #
+    star_selector: '* is HORRIBLE performance please use a different selector'
+    zero_px: 'Don\'t need px on 0 values' #
+    no_colon_semicolon: 'No ; or : in stylus file!' #
+    comma_space: ', must have a space after' #
+    alphabetize_check: 'This area needs to be alphabetized'
+    dupe_tag_check: 'Duplicate tags found.. please consolidate'
+  }
+  stylus_help.processData 'simple_lint', [directory/file, data], (data) ->
+    JSON.stringify(data,null)
+  ```
+  The above call executed on the below file
+  
+  
+  ```
+  underline()
+    &:not(.signup):not(.background)
+      box-sizing border-box
+      border-bottom 4px solid rgba($color, 0)
+      cursor pointer
+      padding 0px 5px
+      &:hover
+        background rgba($frame_background_color, .4)
+        border-bottom 4px solid $color
+  
+  .exports.region
+    border-top 1px solid $background_color
+    bottom 0
+    box-shadow 0px 0px 20px rgba(0, 0, 0, .4)
+    color $footer_text_color
+    height unit($footer_height, 'px')
+    font-family $title_font
+    left 0
+    position fixed
+    right 0
+    text-align center
+    transition all .2s ease-in
+    z-index 16
+    .newsletter.custom_text > a
+      i, span
+        color $footer_text_color
+        div, a , iframe
+          margin-left 10px
+
+  ```
+  gives this output..
+  ```
+  [
+     {
+        "message": "Don't need px on 0 values",
+        "line": "    padding 0px 5px",
+        "line_num": 6
+     },
+     {
+        "message": "Don't need px on 0 values",
+        "line": "  box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
+        "line_num": 14
+     },
+     {
+        "message": "Don't need px on 0 values",
+        "line": "        margin-left 10px",
+        "line_num": 28
+     },
+     {
+        "message": "This area needs to be alphabetized",
+        "line": "border-bottom 4px solid rgba($color, 0)",
+        "line_num": "3"
+     },
+     {
+        "message": "This area needs to be alphabetized",
+        "line": "border-top 1px solid $background_color",
+        "line_num": "12"
+     }
+  ]
+  ```
+   
+  
   
 
   
