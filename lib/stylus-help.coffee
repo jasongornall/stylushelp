@@ -79,24 +79,21 @@ getFiles = (args, next) =>
 
 # COMMAND LINE STUFF
 processData = (command,args,next) =>
-  config = args[1]
-  config ?= {
-    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
-    comment_space: '// must have a space after' #
-    star_selector: '* is HORRIBLE performance please use a different selector'
-    zero_px: 'Don\'t need px on 0 values' #
-    no_colon_semicolon: 'No ; or : in stylus file!' #
-    comma_space: ', must have a space after' #
-    alphabetize_check: 'This area needs to be alphabetized'
-    dupe_tag_check: 'Duplicate tags found.. please consolidate'
-    style_attribute_check: 'Invalid Attribute!'
-  }
-
-
-
   getFiles args, (read_files) =>
     switch command
       when 'simple_lint'
+        config = args[1]
+        config ?= {
+          bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
+          comment_space: '// must have a space after' #
+          star_selector: '* is HORRIBLE performance please use a different selector'
+          zero_px: 'Don\'t need px on 0 values' #
+          no_colon_semicolon: 'No ; or : in stylus file!' #
+          comma_space: ', must have a space after' #
+          alphabetize_check: 'This area needs to be alphabetized'
+          dupe_tag_check: 'Duplicate tags found.. please consolidate'
+          style_attribute_check: 'Invalid Attribute!'
+        }
         errors= []
         addError = (msg, line, line_num) =>
           errors.push {
