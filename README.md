@@ -293,6 +293,107 @@ underline()
 }
 
   ```
+  ### simple_lint
+  This utilized the existing functions in this package to do a basic lint on the stylus file.
+  
+  A sample call using the plugin
+  ```
+   stylus-help simple_lint <path to stylus dir or file>
+  ```
+  this by default will run every check, however if you use this plugin yourself you can specify a config file with what to check for
+  ```json
+  {
+    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
+    comment_space: '// must have a space after' #
+    star_selector: '* is HORRIBLE performance please use a different selector'
+    zero_px: 'Don\'t need px on 0 values' #
+    no_colon_semicolon: 'No ; or : in stylus file!' #
+    comma_space: ', must have a space after' #
+    alphabetize_check: 'This area needs to be alphabetized'
+    dupe_tag_check: 'Duplicate tags found.. please consolidate'
+  }
+  ```
+  call sample looks like this
+  ```
+  data =  {
+    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
+    comment_space: '// must have a space after' #
+    star_selector: '* is HORRIBLE performance please use a different selector'
+    zero_px: 'Don\'t need px on 0 values' #
+    no_colon_semicolon: 'No ; or : in stylus file!' #
+    comma_space: ', must have a space after' #
+    alphabetize_check: 'This area needs to be alphabetized'
+    dupe_tag_check: 'Duplicate tags found.. please consolidate'
+  }
+  stylus_help.processData 'simple_lint', [directory/file, data], (data) ->
+    JSON.stringify(data,null)
+  ```
+  The above call executed on the below file
+  
+  
+  ```
+  underline()
+    &:not(.signup):not(.background)
+      box-sizing border-box
+      border-bottom 4px solid rgba($color, 0)
+      cursor pointer
+      padding 0px 5px
+      &:hover
+        background rgba($frame_background_color, .4)
+        border-bottom 4px solid $color
+  
+  .exports.region
+    border-top 1px solid $background_color
+    bottom 0
+    box-shadow 0px 0px 20px rgba(0, 0, 0, .4)
+    color $footer_text_color
+    height unit($footer_height, 'px')
+    font-family $title_font
+    left 0
+    position fixed
+    right 0
+    text-align center
+    transition all .2s ease-in
+    z-index 16
+    .newsletter.custom_text > a
+      i, span
+        color $footer_text_color
+        div, a , iframe
+          margin-left 10px
+
+  ```
+  gives this output..
+  ```
+  [
+     {
+        "message": "Don't need px on 0 values",
+        "line": "    padding 0px 5px",
+        "line_num": 6
+     },
+     {
+        "message": "Don't need px on 0 values",
+        "line": "  box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
+        "line_num": 14
+     },
+     {
+        "message": "Don't need px on 0 values",
+        "line": "        margin-left 10px",
+        "line_num": 28
+     },
+     {
+        "message": "This area needs to be alphabetized",
+        "line": "border-bottom 4px solid rgba($color, 0)",
+        "line_num": "3"
+     },
+     {
+        "message": "This area needs to be alphabetized",
+        "line": "border-top 1px solid $background_color",
+        "line_num": "12"
+     }
+  ]
+  ```
+   
+  
   
 
   
