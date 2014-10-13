@@ -303,14 +303,14 @@ underline()
   this by default will run every check, however if you use this plugin yourself you can specify a config file with what to check for
   ```json
   {
-    bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
-    comment_space: '// must have a space after' #
-    star_selector: '* is HORRIBLE performance please use a different selector'
-    zero_px: 'Don\'t need px on 0 values' #
-    no_colon_semicolon: 'No ; or : in stylus file!' #
-    comma_space: ', must have a space after' #
-    alphabetize_check: 'This area needs to be alphabetized'
-    dupe_tag_check: 'Duplicate tags found.. please consolidate'
+    "bad_space_check": "Bad spacing! should me a multiple of 2 spaces",
+    "comment_space": "// must have a space after",
+    "star_selector": "* is HORRIBLE performance please use a different selector",
+    "zero_px": "Don't need px on 0 values",
+    "no_colon_semicolon": "No ; or : in stylus file!",
+    "comma_space": ", must have a space after",
+    "alphabetize_check": "This area needs to be alphabetized",
+    "dupe_tag_check": "Duplicate tags found.. please consolidate"
   }
   ```
   call sample looks like this
@@ -324,6 +324,7 @@ underline()
     comma_space: ', must have a space after' #
     alphabetize_check: 'This area needs to be alphabetized'
     dupe_tag_check: 'Duplicate tags found.. please consolidate'
+    style_attribute_check: 'Invalid Attribute!'
   }
   stylus_help.processData 'simple_lint', [directory/file, data], (data) ->
     JSON.stringify(data,null)
@@ -392,7 +393,8 @@ underline()
      }
   ]
   ```
-   
+####style_attribute_check
+ makes use of a JSON file to validate common key/value mixups
   
   
 
