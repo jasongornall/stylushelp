@@ -3,7 +3,8 @@
 This is a package designed to assist with common problems and allow for stylus to be parsed into a json format for validation purposes. It makes it easy to identify attributes and style headers aswell as fix some common issues when dealing with stylization
 
 Install
-  npm install -g stylus-help
+  npm install -g stylus-help (for command line)
+  npm install stylus-help (for using in code)
   
 Functions for command line
   ```
