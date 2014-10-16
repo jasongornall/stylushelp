@@ -336,7 +336,7 @@ processData = (command,args) ->
       return false
 
 # Support for command line stuff
-if (true)
+if (/stylus-help/.test module?.parent?.filename)
   value = processData command, args
   if value
     value = JSON.stringify(value,null,3)
