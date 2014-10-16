@@ -18,12 +18,12 @@ Functions as a npm package (same returns)<coffeescript>
 ```coffeescript
   stylus_help = require 'stylus-help'
   
-  stylus_help.processData 'normalizeZvalues', [directory/file], (data) ->
-  stylus_help.processData 'inspectZValues', [directory/file], (data) ->
-  stylus_help.processData 'convertStyleToJson', [directory/file], (data) ->
-  stylus_help.processData 'checkAlphabetized', [directory/file], (data) ->
-  stylus_help.processData 'alphabetizeStyle', [directory/file], (data) ->
-  stylus_help.processData 'simple_lint', [directory/file, config_data], (data) ->
+  data = stylus_help.processData 'normalizeZvalues', [directory/file]
+  data = stylus_help.processData 'inspectZValues', [directory/file]
+  data = stylus_help.processData 'convertStyleToJson', [directory/file]
+  data = stylus_help.processData 'checkAlphabetized', [directory/file]
+  data = stylus_help.processData 'alphabetizeStyle', [directory/file]
+  data = stylus_help.processData 'simple_lint', [directory/file, config_data]
 ```
 ### normalizeZvalues
   Takes a directory (not recursive) and goes through and normalizes z-index across the files... It automatically uses a buffer of 10 between z-index values. You can manually specify a buffer if you want to only have a space of 3,4 between values
