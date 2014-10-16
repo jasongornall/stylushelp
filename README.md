@@ -240,8 +240,8 @@ underline()
 {
    "../testing/test.styl": {
       "3": {
-         "space_check": 4,
-         "attributes": [
+         "indent": 4,
+         "rules": [
             "box-sizing border-box",
             "border-bottom 4px solid rgba($color, 0)",
             "cursor pointer",
@@ -249,17 +249,17 @@ underline()
          ],
          "tag": "&:not(.signup):not(.background)"
       },
-      "7": {
-         "space_check": 6,
-         "attributes": [
+      "9": {
+         "indent": 6,
+         "rules": [
             "background rgba($frame_background_color, .4)",
             "border-bottom 4px solid $color"
          ],
          "tag": "&:not(.signup):not(.background) &:hover"
       },
       "12": {
-         "space_check": 2,
-         "attributes": [
+         "indent": 2,
+         "rules": [
             "border-top 1px solid $background_color",
             "bottom 0",
             "box-shadow 0px 0px 20px rgba(0, 0, 0, .4)",
@@ -276,23 +276,15 @@ underline()
          "tag": ".exports.region"
       },
       "26": {
-         "space_check": 6,
-         "attributes": [
+         "indent": 6,
+         "rules": [
             "color $footer_text_color"
          ],
          "tag": ".exports.region .newsletter.custom_text > a i, .exports.region .newsletter.custom_text > a span"
-      },
-      "27": {
-         "space_check": 8,
-         "attributes": [
-            "margin-left 10px"
-         ],
-         "tag": ".exports.region .newsletter.custom_text > a i div, .exports.region .newsletter.custom_text > a i a, .exports.region .newsletter.custom_text > a i iframe, .exports.region .newsletter.custom_text > a span div, .exports.region .newsletter.custom_text > a span a, .exports.region .newsletter.custom_text > a span iframe"
       }
    }
 }
-
-  ```
+```
 ### simple lint
   This utilized the existing functions in this package to do a basic lint on the stylus file.
   
