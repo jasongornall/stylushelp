@@ -84,12 +84,12 @@ processData = (command,args) ->
     when 'simple_lint'
       config = args[1]
       config ?= {
-        bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' ##
-        comment_space: '// must have a space after' ##
-        star_selector: '* is HORRIBLE performance please use a different selector' ##
-        zero_px: 'Don\'t need px on 0 values' ##
-        no_colon_semicolon: 'No ; or : in stylus file!' #
-        comma_space: ', must have a space after' #
+        bad_indent: 'Bad spacing! should me a multiple of 2 spaces'
+        comment_space: '// must have a space after'
+        star_selector: '* is HORRIBLE performance please use a different selector'
+        zero_px: 'Don\'t need px on 0 values'
+        no_colon_semicolon: 'No ; or : in stylus file!'
+        comma_space: ', must have a space after'
         alphabetize_check: 'This area needs to be alphabetized'
         dupe_tag_check: 'Duplicate tags found.. please consolidate'
         style_attribute_check: 'Invalid Attribute!'
@@ -112,11 +112,11 @@ processData = (command,args) ->
           data = data.split('\n')
           for line, line_num in data
 
-            # bad_space_check
-            if config.bad_space_check
+            # bad_indent
+            if config.bad_indent
               spaces = getPreSpaces(line)
               if (spaces % 2) isnt 0
-                addError config?.bad_space_check, line, (line_num + 1)
+                addError config?.bad_indent, line, (line_num + 1)
 
             # comment_space
             if config?.comment_space
@@ -147,7 +147,7 @@ processData = (command,args) ->
               if /\*/.test attribute_info.tag
                 addError config.star_selector, attribute_info.tag, (line_num)
 
-            for attribute, key in attribute_info.attributes
+            for attribute, key in attribute_info.rules
 
               # invalid attribute check
               if config.style_attribute_check
@@ -198,14 +198,14 @@ processData = (command,args) ->
       data = processData 'convertStyleToJson',args
       for file_name, file of data
         for tag, attribute_info of file
-          if (alphabetize(attribute_info.attributes))
+          if (alphabetize(attribute_info.rules))
             return_data ?= {
               alphabetized: false
               infractions: []
             }
             return_data.infractions.push {
               line_number: tag
-              line: attribute_info.attributes[0]
+              line: attribute_info.rules[0]
               file_name
             }
       return_data ?= {
@@ -216,10 +216,10 @@ processData = (command,args) ->
       data = processData 'convertStyleToJson', args
       for file_name, file of data
         for index, attribute_info of file
-          if (alphabetize(attribute_info.attributes))
-            space_num = attribute_info.space_check
+          if (alphabetize(attribute_info.rules))
+            space_num = attribute_info.indent
             spaces = Array(parseInt(space_num + 1)).join ' '
-            for attr, line_num in attribute_info.attributes
+            for attr, line_num in attribute_info.rules
               line = parseInt(index,10) + parseInt(line_num,10)
               writeToLine(file_name,"#{spaces}#{attr}",line)
       return processData 'checkAlphabetized', args
@@ -250,7 +250,7 @@ processData = (command,args) ->
         tagFound = false
         attributeSet = []
         tag = ''
-        space_check = 0
+        indent = 0
         for line_num, line of data
           if line.match(/^\s*$/)
             continue
@@ -259,11 +259,11 @@ processData = (command,args) ->
 
             if attributeSet.length
               line_number = parseInt(line_num, 10) + 1 - attributeSet.length
-              obj[line_number]= {space_check, attributes: attributeSet}
+              obj[line_number]= {indent, rules: attributeSet}
               obj[line_number].tag = tag.trim()
 
               attributeSet = []
-              space_check = 0
+              indent = 0
 
             if getPreSpaces(line) > getPreSpaces(tag)
               tag = join(tag, line.trim())
@@ -272,20 +272,20 @@ processData = (command,args) ->
 
           else if tagFound
             pre_spaces = getPreSpaces(line)
-            if space_check == 0
-              space_check = pre_spaces
-              if space_check == 0
+            if indent == 0
+              indent = pre_spaces
+              if indent == 0
                 continue
 
-            if space_check == pre_spaces
+            if indent == pre_spaces
               attributeSet.push("#{line.trim()}")
             else
               line_number = parseInt(line_num, 10) - attributeSet.length
-              obj[line_number]= {space_check, attributes: attributeSet}
+              obj[line_number]= {indent, rules: attributeSet}
               obj[line_number].tag = tag.trim()
               tag = ''
               attributeSet = []
-              space_check = 0
+              indent = 0
 
         total_return[file] = obj
 
