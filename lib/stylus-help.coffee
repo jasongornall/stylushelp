@@ -10,7 +10,7 @@ filePath = path.join(__dirname, 'valid_selectors.json')
 valid_selectors = JSON.parse (fs.readFileSync filePath, 'utf8')
 
 # usage
-USAGE = '
+USAGE = """
 Usage: styler <command> [command-specific-options]
 
 where <command> [command-specific-options] is one of:
@@ -20,7 +20,7 @@ where <command> [command-specific-options] is one of:
   inspectZValues <path to stylus dir or file>
   normalizeZvalues <path to stylus dir or file>, [value to normalize on]
   simple_lint <path to stylus dir or file>
-'
+"""
 
 # get arguments and options (used for command line executions)
 argv = optimist.argv._
@@ -84,10 +84,10 @@ processData = (command,args) ->
     when 'simple_lint'
       config = args[1]
       config ?= {
-        bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' #
-        comment_space: '// must have a space after' #
-        star_selector: '* is HORRIBLE performance please use a different selector'
-        zero_px: 'Don\'t need px on 0 values' #
+        bad_space_check: 'Bad spacing! should me a multiple of 2 spaces' ##
+        comment_space: '// must have a space after' ##
+        star_selector: '* is HORRIBLE performance please use a different selector' ##
+        zero_px: 'Don\'t need px on 0 values' ##
         no_colon_semicolon: 'No ; or : in stylus file!' #
         comma_space: ', must have a space after' #
         alphabetize_check: 'This area needs to be alphabetized'
@@ -142,29 +142,34 @@ processData = (command,args) ->
             total_tags[attribute_info.tag]?= []
             total_tags[attribute_info.tag].push (line - 1)
 
+            # star_selector
+            if config.star_selector
+              if /\*/.test attribute_info.tag
+                addError config.star_selector, attribute_info.tag, (line_num)
+
             for attribute, key in attribute_info.attributes
+
+              # invalid attribute check
               if config.style_attribute_check
                 att = attribute.trim()
                 pair = att.split(' ')
                 if pair?.length == 2 and valid_selectors[pair[0]]
                   if pair[1] not in valid_selectors[pair[0]]
                     s_ac = config.style_attribute_check
-                    addError s_ac, attribute, (line + key)
+                    addError s_ac, attribute, (line + key - 1)
 
-               # star_selector
-              if config.star_selector
-                if /\*/.test attribute
-                  addError config.star_selector, attribute, (line + key)
-
+              # semi colon check
               if config.no_colon_semicolon
                 if /;|:/.test attribute
-                  addError config.no_colon_semicolon, attribute, (line + key)
-                check_1 = /,/.test attribute
-                check_2 =  /,\s/.test attribute
+                  addError config.no_colon_semicolon, attribute, (line + key - 1)
 
+
+              # comma space check
               if config.comma_space
-                if check_1 and !check_2
-                  addError config.comma_space, attribute, (line + key)
+                check_1 = attribute.match /,/g
+                check_2 =  attribute.match /,\s/g
+                if check_1?.length != check_2?.length
+                  addError config.comma_space, attribute, (line + key - 1)
 
         if config.dupe_tag_check
           for tag, arr of total_tags
