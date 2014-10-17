@@ -92,9 +92,10 @@ processData = (command,args) ->
         dupe_tag_check: 'Duplicate tags found.. please consolidate'
         style_attribute_check: 'Invalid Attribute!'
       }
-      errors= []
-      addError = (msg, line, line_num) ->
-        errors.push {
+      files = {}
+      addError = (msg, line, line_num, file) ->
+        files[file] ?= [ ]
+        files[file].push {
           message: msg
           line: line
           line_num
@@ -114,19 +115,19 @@ processData = (command,args) ->
             if bad_indent
               spaces = getPreSpaces(line)
               if (spaces % 2)
-                addError bad_indent, line, (line_num + 1)
+                addError bad_indent, line, (line_num + 1), file
 
             # comment_space
             if comment_space
               check_1 = /^\s*\/\//.test line
               check_2 =  /\/\/\s/.test line
               if check_1 and !check_2
-                addError comment_space, line, (line_num + 1)
+                addError comment_space, line, (line_num + 1), file
 
             # zero_px
             if zero_px
               if /\s0px/.test line
-                addError zero_px, line, (line_num + 1)
+                addError zero_px, line, (line_num + 1), file
 
       postJsonChecks =  ->
         data = processData 'convertStyleToJson',args
@@ -148,7 +149,7 @@ processData = (command,args) ->
             # star_selector
             if star_selector
               if /\*/.test attribute_info.tag
-                addError star_selector, attribute_info.tag, (line_num - 1)
+                addError star_selector, attribute_info.tag, (line_num - 1), file_name
 
             for attribute, key in attribute_info.rules
 
@@ -159,12 +160,12 @@ processData = (command,args) ->
                 if pair?.length == 2 and valid_selectors[pair[0]]
                   if pair[1] not in valid_selectors[pair[0]]
                     s_ac = style_attribute_check
-                    addError s_ac, attribute, (line + key - 1)
+                    addError s_ac, attribute, (line + key - 1), file_name
 
               # semi colon check
               if no_colon_semicolon
                 if /;|:/.test attribute
-                  addError no_colon_semicolon, attribute, (line + key - 1)
+                  addError no_colon_semicolon, attribute, (line + key - 1), file_name
 
 
               # comma space check
@@ -172,14 +173,15 @@ processData = (command,args) ->
                 check_1 = attribute.match /,/g
                 check_2 =  attribute.match /,\s/g
                 if check_1?.length != check_2?.length
-                  addError comma_space, attribute, (line + key - 1)
+                  addError comma_space, attribute, (line + key - 1), file_name
 
-        if dupe_tag_check
-          for tag, arr of total_tags
-            if arr.length > 1
-              lines = arr.join ','
-              for dupe, index in arr
-                addError dupe_tag_check, tag, dupe
+          if dupe_tag_check
+            for tag, arr of total_tags
+              if arr.length > 1
+                lines = arr.join ','
+                for dupe, index in arr
+                  addError dupe_tag_check, tag, dupe, file_name
+            total_tags = []
 
       alphabetizeCheck = ->
         {alphabetize_check} = config or {}
@@ -187,14 +189,14 @@ processData = (command,args) ->
           return_data = processData 'checkAlphabetized',args
           return_data.infractions ?= []
           for infraction, key in return_data.infractions
-            {line, line_number} = infraction or {}
-            addError alphabetize_check, line, line_number
+            {line, line_number, file_name} = infraction or {}
+            addError alphabetize_check, line, line_number, file_name
 
       preJsonChecks()
       postJsonChecks()
       alphabetizeCheck()
 
-      return errors
+      return files
     when 'checkAlphabetized'
       infractions = []
       data = processData 'convertStyleToJson',args
