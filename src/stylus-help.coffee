@@ -171,7 +171,6 @@ processData = (command,args) ->
               if comma_space
                 check_1 = attribute.match /,/g
                 check_2 =  attribute.match /,\s/g
-                console.log attribute, check_1, check_2
                 if check_1?.length != check_2?.length
                   addError comma_space, attribute, (line + key - 1)
 
@@ -342,7 +341,7 @@ processData = (command,args) ->
       return false
 
 # Support for command line stuff
-if (/stylus-help/.test module?.parent?.filename)
+if (true)
   value = processData command, args
   if value
     value = JSON.stringify(value,null,3)
