@@ -3,6 +3,12 @@
       "name": "Jason Gornall",
       "email": "gornall.jason@gmail.com"
   },
+  "contributors": [
+    {
+      "name": "Steven Anderson",
+      "email": "steven@sjanderson.org"
+    }
+  ],
   "main": "./lib/stylus-help",
   "bin": {
     "stylus-help": "./bin/stylus-help"
@@ -12,8 +18,10 @@
   },
   "dependencies": {
     "optimist": "0.6.x",
-    "async": "0.9.x",
-    "coffee-script": "1.7.x"
+    "async": "0.9.x"
+  },
+  "devDependencies": {
+      "coffee-script": "1.7.x"
   },
   "description": "Stylus tools to help with development",
   "directories": {
@@ -27,5 +35,8 @@
       "type": "git",
       "url": "git@github.com:jasongornall/stylushelp.git"
   },
-  "version": "1.3.1"
+  "scripts": {
+      "prepublish": "cake build"
+  },
+  "version": "1.4.1"
 }
