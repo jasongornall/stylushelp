@@ -29,7 +29,7 @@ args = argv[1...argv.length]
 opts = optimist.argv
 
 # HELPER FUNCTIONS
-exit = (msg = 'bye') ->
+exit = (msg) ->
   log msg if msg
   process.exit()
 
@@ -41,9 +41,10 @@ getPreSpaces = (str) ->
   return str.match(/^(\s)*/)[0].length
 
 writeToLine = (file, line_str, line_num) ->
-  file_str = ''
   data = fs.readFileSync file,'utf8'
   data = data.split('\n')
+
+  file_str = ''
   for line_number, line of data
     end_line = ''
     if line_number == "#{line_num-1}"
@@ -61,18 +62,15 @@ alphabetize = (data) ->
   return not arrayEqual(old_data,data)
 
 getFiles = (args, next) ->
-  type = ''
   return [] unless args.length
   stats = fs.statSync args[0]
 
   if stats.isDirectory()
-    type = 'directory'
     read_files = fs.readdirSync args[0]
     for key, val of read_files
       read_files[key] = args[0] + read_files[key]
 
   else if stats.isFile()
-    type = 'file'
     read_files = [args[0]]
 
   return read_files
@@ -103,37 +101,42 @@ processData = (command,args) ->
         }
 
       preJsonChecks =  ->
+        {bad_indent, comment_space, zero_px} = config or {}
         for file in read_files
           if not (/.styl/.test(file))
-            data_next()
-            return
+            continue
 
           data = fs.readFileSync file, 'utf8'
           data = data.split('\n')
           for line, line_num in data
 
             # bad_indent
-            if config.bad_indent
+            if bad_indent
               spaces = getPreSpaces(line)
-              if (spaces % 2) isnt 0
-                addError config?.bad_indent, line, (line_num + 1)
+              if (spaces % 2)
+                addError bad_indent, line, (line_num + 1)
 
             # comment_space
-            if config?.comment_space
+            if comment_space
               check_1 = /^\s*\/\//.test line
               check_2 =  /\/\/\s/.test line
               if check_1 and !check_2
-                addError config?.comment_space, line, (line_num + 1)
+                addError comment_space, line, (line_num + 1)
 
             # zero_px
-            if config.zero_px
+            if zero_px
               if /\s0px/.test line
-                addError config.zero_px, line, (line_num + 1)
+                addError zero_px, line, (line_num + 1)
 
       postJsonChecks =  ->
         data = processData 'convertStyleToJson',args
         stylus_stags = []
         total_tags = {}
+
+        config ?= {}
+        {star_selector, style_attribute_check, no_colon_semicolon} = config
+        {comma_space, dupe_tag_check} = config
+
         for file_name, file of data
           for line_num, attribute_info of file
             if attribute_info.tag == ''
@@ -143,50 +146,50 @@ processData = (command,args) ->
             total_tags[attribute_info.tag].push (line - 1)
 
             # star_selector
-            if config.star_selector
+            if star_selector
               if /\*/.test attribute_info.tag
-                addError config.star_selector, attribute_info.tag, (line_num)
+                addError star_selector, attribute_info.tag, (line_num - 1)
 
             for attribute, key in attribute_info.rules
 
               # invalid attribute check
-              if config.style_attribute_check
+              if style_attribute_check
                 att = attribute.trim()
                 pair = att.split(' ')
                 if pair?.length == 2 and valid_selectors[pair[0]]
                   if pair[1] not in valid_selectors[pair[0]]
-                    s_ac = config.style_attribute_check
+                    s_ac = style_attribute_check
                     addError s_ac, attribute, (line + key - 1)
 
               # semi colon check
-              if config.no_colon_semicolon
+              if no_colon_semicolon
                 if /;|:/.test attribute
-                  addError config.no_colon_semicolon, attribute, (line + key - 1)
+                  addError no_colon_semicolon, attribute, (line + key - 1)
 
 
               # comma space check
-              if config.comma_space
+              if comma_space
                 check_1 = attribute.match /,/g
                 check_2 =  attribute.match /,\s/g
+                console.log attribute, check_1, check_2
                 if check_1?.length != check_2?.length
-                  addError config.comma_space, attribute, (line + key - 1)
+                  addError comma_space, attribute, (line + key - 1)
 
-        if config.dupe_tag_check
+        if dupe_tag_check
           for tag, arr of total_tags
             if arr.length > 1
               lines = arr.join ','
               for dupe, index in arr
-                addError config.dupe_tag_check, tag, dupe
+                addError dupe_tag_check, tag, dupe
 
       alphabetizeCheck = ->
-        if config.alphabetize_check
+        {alphabetize_check} = config or {}
+        if alphabetize_check
           return_data = processData 'checkAlphabetized',args
           return_data.infractions ?= []
           for infraction, key in return_data.infractions
-            a_c = config.alphabetize_check
-            i_l = infraction.line
-            i_ln = infraction.line_number
-            addError a_c, i_l, i_ln
+            {line, line_number} = infraction or {}
+            addError alphabetize_check, line, line_number
 
       preJsonChecks()
       postJsonChecks()
@@ -194,37 +197,35 @@ processData = (command,args) ->
 
       return errors
     when 'checkAlphabetized'
-      return_data = null
+      infractions = []
       data = processData 'convertStyleToJson',args
       for file_name, file of data
         for tag, attribute_info of file
-          if (alphabetize(attribute_info.rules))
-            return_data ?= {
-              alphabetized: false
-              infractions: []
-            }
-            return_data.infractions.push {
-              line_number: tag
-              line: attribute_info.rules[0]
-              file_name
-            }
-      return_data ?= {
-        alphabetized: true
-      }
-      return return_data
+          {rules} = attribute_info
+          continue unless alphabetize rules
+          infractions.push {
+            line_number: tag
+            line: rules[0]
+            file_name
+          }
+      return {alphabetized: false, infractions} if infractions.length
+      return {alphabetized: true}
     when 'alphabetizeStyle'
       data = processData 'convertStyleToJson', args
       for file_name, file of data
         for index, attribute_info of file
-          if (alphabetize(attribute_info.rules))
-            space_num = attribute_info.indent
-            spaces = Array(parseInt(space_num + 1)).join ' '
-            for attr, line_num in attribute_info.rules
-              line = parseInt(index,10) + parseInt(line_num,10)
-              writeToLine(file_name,"#{spaces}#{attr}",line)
+          {rules, indent} = attribute_info
+          continue unless alphabetize rules
+
+          spaces = Array(parseInt(indent) + 1).join ' '
+          for attr, line_num in rules
+            line = parseInt(index) + parseInt(line_num,10)
+            writeToLine file_name, "#{spaces}#{attr}", line
       return processData 'checkAlphabetized', args
 
     when 'convertStyleToJson'
+      total_return = {}
+      processed = 0
 
       # a,b  d,c
       # a.d, a.c , b.d, b.c
@@ -237,36 +238,38 @@ processData = (command,args) ->
             str.push("#{arg1.trim()} #{arg2.trim()}")
         return str.join(', ')
 
-      total_return = {}
-      processed = 0
 
       for file in read_files
+        continue unless /.styl/.test file
         obj = {}
-        if not (/.styl/.test(file))
-          continue
-
+        tag_found_test = /((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/
         data = fs.readFileSync file,'utf8', (err, data) ->
         data = data.split('\n')
         tagFound = false
         attributeSet = []
         tag = ''
         indent = 0
+
         for line_num, line of data
-          if line.match(/^\s*$/)
-            continue
-          if line.match(/((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/)
+          continue if line.match /^\s*$/
+
+
+          if line.match tag_found_test
             tagFound = true
 
             if attributeSet.length
               line_number = parseInt(line_num, 10) + 1 - attributeSet.length
-              obj[line_number]= {indent, rules: attributeSet}
-              obj[line_number].tag = tag.trim()
+              obj[line_number]= {
+                indent
+                rules: attributeSet
+                tag: tag.trim()
+              }
 
               attributeSet = []
               indent = 0
 
             if getPreSpaces(line) > getPreSpaces(tag)
-              tag = join(tag, line.trim())
+              tag = join tag, line.trim()
             else
               tag = line
 
@@ -281,8 +284,13 @@ processData = (command,args) ->
               attributeSet.push("#{line.trim()}")
             else
               line_number = parseInt(line_num, 10) - attributeSet.length
-              obj[line_number]= {indent, rules: attributeSet}
-              obj[line_number].tag = tag.trim()
+
+              obj[line_number]= {
+                indent
+                rules: attributeSet
+                tag: tag.trim()
+              }
+
               tag = ''
               attributeSet = []
               indent = 0
@@ -292,37 +300,30 @@ processData = (command,args) ->
       return total_return
 
     when 'inspectZValues'
-      generateJson = (doneJson) ->
-        processed = 1
-        filesTotal = {}
-        for file in read_files
-          addFile = (file) ->
-            if /.styl/.test(file)
-              data = fs.readFileSync "#{file}",'utf8'
-              arr = data.match(/(z-index:? +)([0-9]+)/g)
-              if arr?.length
-                for val in arr
-                  val = val.match(/(z-index:? +)([0-9]+)/)
-                  z_index = parseInt(val[2],10)
+      filesTotal = {}
+      for file in read_files
+        if /.styl/.test(file)
+          data = fs.readFileSync "#{file}",'utf8'
+          arr = data.match(/(z-index:? +)([0-9]+)/g)
+          if arr?.length
+            for val in arr
+              val = val.match(/(z-index:? +)([0-9]+)/)
+              z_index = parseInt(val[2],10)
 
-                  filesTotal[z_index] ?= []
-                  filesTotal[z_index].push(file)
-                data_next()
-          addFile(file)
-      return generateJson(filesTotal)
+              filesTotal[z_index] ?= []
+              filesTotal[z_index].push(file)
+      return filesTotal
 
     # Normalize z index values
     when 'normalizeZvalues'
       sizeOf = (obj) ->
         size = 0
-        for key, val of obj
-          size++
+        size++ for key, val of obj
         return size;
 
       filesTotal = processData 'inspectZValues', args
       count = null
-      breathing_room = args[1]
-      breathing_room ?= 10
+      breathing_room = args[1] or 10
       for z_index, files of filesTotal
         z_index = parseInt(z_index,10)
         count ?= Math.min(z_index,1)
