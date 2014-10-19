@@ -252,6 +252,7 @@ processData = (command,args) ->
         indent = 0
 
         for line_num, line of data
+          line = line.replace /\/\/.+/, ''
           continue if line.match /^\s*$/
 
 
