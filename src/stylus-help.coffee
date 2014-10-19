@@ -16,6 +16,7 @@ Usage: styler <command> [command-specific-options]
 where <command> [command-specific-options] is one of:
   alphabetizeStyle <path to stylus dir or file>
   checkAlphabetized <path to stylus dir or file>
+  convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
   inspectZValues <path to stylus dir or file>
   normalizeZvalues <path to stylus dir or file>, [value to normalize on]
   simple_lint <path to stylus dir or file>
