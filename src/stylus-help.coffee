@@ -16,7 +16,6 @@ Usage: styler <command> [command-specific-options]
 where <command> [command-specific-options] is one of:
   alphabetizeStyle <path to stylus dir or file>
   checkAlphabetized <path to stylus dir or file>
-  convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
   inspectZValues <path to stylus dir or file>
   normalizeZvalues <path to stylus dir or file>, [value to normalize on]
   simple_lint <path to stylus dir or file>
@@ -244,7 +243,7 @@ processData = (command,args) ->
         continue unless /.styl/.test file
         obj = {}
         tag_found_test = /((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/
-        data = fs.readFileSync file,'utf8', (err, data) ->
+        data = fs.readFileSync file,'utf8'
         data = data.split('\n')
         tagFound = false
         attributeSet = []
@@ -252,10 +251,8 @@ processData = (command,args) ->
         indent = 0
 
         for line_num, line of data
-          line = line.replace /\/\/.+/, ''
           continue if line.match /^\s*$/
-
-
+          line = line?.replace /^\s*\/\/.+/, ''
           if line.match tag_found_test
             tagFound = true
 
