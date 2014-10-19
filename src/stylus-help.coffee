@@ -160,12 +160,12 @@ processData = (command,args) ->
                 if pair?.length == 2 and valid_selectors[pair[0]]
                   if pair[1] not in valid_selectors[pair[0]]
                     s_ac = style_attribute_check
-                    addError s_ac, attribute, (line + key - 1), file_name
+                    addError s_ac, attribute, (line + key), file_name
 
               # semi colon check
               if no_colon_semicolon
                 if /;|:/.test attribute
-                  addError no_colon_semicolon, attribute, (line + key - 1), file_name
+                  addError no_colon_semicolon, attribute, (line + key), file_name
 
 
               # comma space check
@@ -173,7 +173,7 @@ processData = (command,args) ->
                 check_1 = attribute.match /,/g
                 check_2 =  attribute.match /,\s/g
                 if check_1?.length != check_2?.length
-                  addError comma_space, attribute, (line + key - 1), file_name
+                  addError comma_space, attribute, (line + key), file_name
 
           if dupe_tag_check
             for tag, arr of total_tags
@@ -343,7 +343,7 @@ processData = (command,args) ->
       return false
 
 # Support for command line stuff
-if (/stylus-help/.test module?.parent?.filename)
+if (true)
   value = processData command, args
   if value
     value = JSON.stringify(value,null,3)
