@@ -90,7 +90,7 @@ processData = (command,args) ->
         comma_space: ', must have a space after'
         alphabetize_check: 'This area needs to be alphabetized'
         dupe_tag_check: 'Duplicate tags found.. please consolidate'
-        style_attribute_check: 'Invalid Attribute!'
+        style_attribute_check: 'Invalid stylus declaration!'
       }
       files = {}
       addError = (msg, line, line_num, file) ->
@@ -160,12 +160,12 @@ processData = (command,args) ->
                 if pair?.length == 2 and valid_selectors[pair[0]]
                   if pair[1] not in valid_selectors[pair[0]]
                     s_ac = style_attribute_check
-                    addError s_ac, attribute, (line + key - 1), file_name
+                    addError s_ac, attribute, (line + key), file_name
 
               # semi colon check
               if no_colon_semicolon
                 if /;|:/.test attribute
-                  addError no_colon_semicolon, attribute, (line + key - 1), file_name
+                  addError no_colon_semicolon, attribute, (line + key), file_name
 
 
               # comma space check
@@ -173,7 +173,7 @@ processData = (command,args) ->
                 check_1 = attribute.match /,/g
                 check_2 =  attribute.match /,\s/g
                 if check_1?.length != check_2?.length
-                  addError comma_space, attribute, (line + key - 1), file_name
+                  addError comma_space, attribute, (line + key), file_name
 
           if dupe_tag_check
             for tag, arr of total_tags
@@ -244,7 +244,7 @@ processData = (command,args) ->
         continue unless /.styl/.test file
         obj = {}
         tag_found_test = /((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(,| |\.|$).*/
-        data = fs.readFileSync file,'utf8', (err, data) ->
+        data = fs.readFileSync file,'utf8'
         data = data.split('\n')
         tagFound = false
         attributeSet = []
@@ -253,8 +253,7 @@ processData = (command,args) ->
 
         for line_num, line of data
           continue if line.match /^\s*$/
-
-
+          line = line?.replace /^\s*\/\/.+/, ''
           if line.match tag_found_test
             tagFound = true
 

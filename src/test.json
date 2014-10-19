@@ -1,0 +1,41 @@
+{
+   "../testing/test2.styl": {
+      "14": {
+         "indent": 2,
+         "rules": [
+            "box-shadow 0 0 200px -30px $secondary_color"
+         ],
+         "tag": ".fancybox-wrap"
+      },
+      "16": {
+         "indent": 4,
+         "rules": [
+            "box-shadow 0 0 20px 6px rbga(0, 0, 0,0.5) !important"
+         ],
+         "tag": ".fancybox-wrap .fancybox-skin"
+      },
+      "19": {
+         "indent": 4,
+         "rules": [
+            "display hidden !important"
+         ],
+         "tag": ".fancybox-wrap .fancybox-skin .fancybox-inner"
+      },
+      "21": {
+         "indent": 2,
+         "rules": [
+            "background-position center center",
+            "background-size cover",
+            "box-shadow 10px 10px 10px 10px #FFF",
+            "color $frame_text_color",
+            "display none",
+            "height 300px",
+            "position relative",
+            "text-align center",
+            "text-transform uppercase",
+            "width 600px"
+         ],
+         "tag": "#login-fancybox"
+      }
+   }
+}
