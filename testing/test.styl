@@ -1,25 +1,20 @@
-.exports
-  display inline-block
-  max-width 100%
-  position relative
-  z-index 500
-  .content
-    background #646464
-    overflow hidden
-    padding-bottom 100%
-    position relative
-    user-select none
-    &.button-only
-      background none
-      .artwork
-        display none
-      .song-list-wrap
-        display none
-        border none
-
-    // artwork
-    @css {
-      .artwork.overlay {
-        filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'blur\' x=\'0\' y=\'0\'><feGaussianBlur stdDeviation=\'3\'/></filter></svg>#blur");
-      }
-    }
+.rings
+  border-radius 50%
+  display none
+  left 50%
+  position absolute
+  top 50%
+  z-index 110
+  circle, path
+    stroke-opacity .7
+    stroke-width 15
+    &.base
+      stroke #323232
+    &.buffer
+      stroke #000
+    &.progress
+      stroke $color
+      stroke-opacity 1
+    &.mouseover
+      stroke #fff
+      stroke-width 5

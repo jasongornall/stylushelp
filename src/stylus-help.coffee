@@ -248,7 +248,26 @@ processData = (command,args) ->
       for file in read_files
         continue unless /.styl/.test file
         obj = {}
-        tag_found_test = /((\n|^)(\s)*(\.|&|>|#|@media).+)|(\n|^)(\s)*(table|td|th|tr|div|span|a|h1|h2|h3|h4|h5|h6|strong|em|quote|form|fieldset|label|input|textarea|button|body|img|ul|li|html|object|iframe|p|blockquote|abbr|address|cite|del|dfn|ins|kbd|q|samp|sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|tfoot|thead|article|aside|canvas|details|figcaption|figure|footer|header|hgroup|menu|nav|section|summary|time|mark|audio|video)(\:.+|,| |\.|$).*/
+        tag_found_test = ///
+          ((\n|^)(\s)*(\.|&|>|\#|@media).+)| # grab initial class/tag/media/&/ >
+          (\n|^)(\s)*( # look for html elements
+
+            # valid html elements
+            table|td|th|tr|div|span|a|h1|h2|h3|
+            h4|h5|h6|strong|em|quote|form|fieldset|
+            label|input|textarea|button|body|img|
+            ul|li|html|object|iframe|p|blockquote|
+            abbr|address|cite|del|dfn|ins|kbd|q|samp|
+            sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|
+            tfoot|thead|article|aside|canvas|details|figcaption|
+            figure|footer|header|hgroup|menu|nav|section|summary|
+            time|mark|audio|video|
+
+            # valid svg elements keeping this really basic for now
+            circle|path|text|ellipse|line|polygon|polyline
+
+        )(\:.+|,|\s|\.|$).* #support for div.whatever or :after
+        ///
         data = fs.readFileSync file,'utf8'
         data = data.split('\n')
         tagFound = false
