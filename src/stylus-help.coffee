@@ -89,7 +89,6 @@ processData = (command,args) ->
         no_colon_semicolon: 'No ; or : in stylus file!'
         comma_space: ', must have a space after'
         alphabetize_check: 'This area needs to be alphabetized'
-        dupe_tag_check: 'Duplicate tags found.. please consolidate'
         style_attribute_check: 'Invalid stylus declaration!'
       }
       files = {}
@@ -136,7 +135,7 @@ processData = (command,args) ->
 
         config ?= {}
         {star_selector, style_attribute_check, no_colon_semicolon} = config
-        {comma_space, dupe_tag_check} = config
+        {comma_space} = config
 
         for file_name, file of data
           for line_num, attribute_info of file
@@ -175,12 +174,7 @@ processData = (command,args) ->
                 if check_1?.length != check_2?.length
                   addError comma_space, attribute, (line + key), file_name
 
-          if dupe_tag_check
-            for tag, arr of total_tags
-              if arr.length > 1
-                lines = arr.join ','
-                for dupe, index in arr
-                  addError dupe_tag_check, tag, dupe, file_name
+
             total_tags = []
 
       alphabetizeCheck = ->
