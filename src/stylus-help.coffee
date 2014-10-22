@@ -225,6 +225,17 @@ processData = (command,args) ->
       return processData 'checkAlphabetized', args
 
     when 'convertStyleToJson'
+      validate = ({tag, rules}) =>
+        return false unless tag and rules
+        for rule in rules
+          if /filter: url\(/.test(rule)
+            return false
+        if /@css/.test tag
+          return false
+
+        return true
+
+
       total_return = {}
       processed = 0
 
@@ -254,16 +265,17 @@ processData = (command,args) ->
         for line_num, line of data
           continue if line.match /^\s*$/
           line = line?.replace /^\s*\/\/.+/, ''
-          if line.match tag_found_test
+          if tag_found_test.test line
             tagFound = true
 
             if attributeSet.length
               line_number = parseInt(line_num, 10) + 1 - attributeSet.length
-              obj[line_number]= {
-                indent
-                rules: attributeSet
-                tag: tag.trim()
-              }
+              if validate {tag, rules: attributeSet}
+                obj[line_number]= {
+                  indent
+                  rules: attributeSet
+                  tag: tag.trim()
+                }
 
               attributeSet = []
               indent = 0
@@ -285,11 +297,12 @@ processData = (command,args) ->
             else
               line_number = parseInt(line_num, 10) - attributeSet.length
 
-              obj[line_number]= {
-                indent
-                rules: attributeSet
-                tag: tag.trim()
-              }
+              if validate {tag, rules: attributeSet}
+                obj[line_number]= {
+                  indent
+                  rules: attributeSet
+                  tag: tag.trim()
+                }
 
               tag = ''
               attributeSet = []

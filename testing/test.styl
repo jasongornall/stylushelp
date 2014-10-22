@@ -1,12 +1,25 @@
-div.test
-  span:first-child
-    font-family $title_font_family
-    font-weight 700
-    margin-right 15px
+.exports
+  display inline-block
+  max-width 100%
+  position relative
+  z-index 500
+  .content
+    background #646464
+    overflow hidden
+    padding-bottom 100%
+    position relative
+    user-select none
+    &.button-only
+      background none
+      .artwork
+        display none
+      .song-list-wrap
+        display none
+        border none
 
-
-div
-  span:first-child
-    font-family $title_font_family
-    font-weight 700
-    margin-right 15px
+    // artwork
+    @css {
+      .artwork.overlay {
+        filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'blur\' x=\'0\' y=\'0\'><feGaussianBlur stdDeviation=\'3\'/></filter></svg>#blur");
+      }
+    }
