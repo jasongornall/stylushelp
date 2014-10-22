@@ -322,7 +322,6 @@ underline()
     no_colon_semicolon: 'No ; or : in stylus file!' #
     comma_space: ', must have a space after' #
     alphabetize_check: 'This area needs to be alphabetized'
-    dupe_tag_check: 'Duplicate tags found.. please consolidate'
     style_attribute_check: 'Invalid Attribute!'
   }
   stylus_help.processData 'simple_lint', [directory/file, data], (data) ->
