@@ -58,7 +58,9 @@ alphabetize = (data) ->
   old_data = data.slice(0)
   data.sort()
   arrayEqual = (a, b) ->
-    a.length is b.length and a.every (elem, i) -> elem is b[i]
+    a.length is b.length and a.every (elem, i) ->
+      elem is b[i]
+
   return not arrayEqual(old_data,data)
 
 getFiles = (args, next) ->
@@ -89,6 +91,8 @@ processData = (command,args) ->
         no_colon_semicolon: 'No ; or : in stylus file!'
         comma_space: ', must have a space after'
         alphabetize_check: 'This area needs to be alphabetized'
+        skip_$:true
+        skip_functions:true
         style_attribute_check: 'Invalid stylus declaration!'
       }
       files = {}
@@ -198,11 +202,18 @@ processData = (command,args) ->
         for tag, attribute_info of file
           {rules} = attribute_info
           continue unless alphabetize rules
-          infractions.push {
-            line_number: tag
-            line: rules[0]
-            file_name
-          }
+          validateInfranction = (rules) =>
+            for rule in rules
+              if /^\$|\(\)/.test rule.trim()
+                return false
+
+            return true
+          if validateInfranction(rules)
+            infractions.push {
+              line_number: tag
+              line: rules[0]
+              file_name
+            }
       return {alphabetized: false, infractions} if infractions.length
       return {alphabetized: true}
     when 'alphabetizeStyle'
@@ -249,6 +260,7 @@ processData = (command,args) ->
         continue unless /.styl/.test file
         obj = {}
         tag_found_test = ///
+          (^.+(\[.+\])$)| # attribute selectors
           ((\n|^)(\s)*(\.|&|>|\#|@media).+)| # grab initial class/tag/media/&/ >
           (\n|^)(\s)*( # look for html elements
 
