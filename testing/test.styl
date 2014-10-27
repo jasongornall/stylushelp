@@ -1,20 +1,14 @@
 .rings
-  border-radius 50%
-  display none
-  left 50%
-  position absolute
-  top 50%
-  z-index 110
-  circle, path
+  circle, path, [panda = 'test']
+    $test = 'anda'
+    testingAnda()
+    alpha 0
     stroke-opacity .7
     stroke-width 15
-    &.base
-      stroke #323232
-    &.buffer
-      stroke #000
-    &.progress
-      stroke $color
-      stroke-opacity 1
-    &.mouseover
-      stroke #fff
-      stroke-width 5
+  .test
+    alpha 0
+    below 0
+    margin-left 10px
+  .what
+    below 0
+    alpha 0
