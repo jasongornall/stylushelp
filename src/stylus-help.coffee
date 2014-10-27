@@ -14,7 +14,6 @@ USAGE = """
 Usage: styler <command> [command-specific-options]
 
 where <command> [command-specific-options] is one of:
-  alphabetizeStyle <path to stylus dir or file>
   checkAlphabetized <path to stylus dir or file>
   convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
   inspectZValues <path to stylus dir or file>
@@ -91,8 +90,6 @@ processData = (command,args) ->
         no_colon_semicolon: 'No ; or : in stylus file!'
         comma_space: ', must have a space after'
         alphabetize_check: 'This area needs to be alphabetized'
-        skip_$:true
-        skip_functions:true
         style_attribute_check: 'Invalid stylus declaration!'
       }
       files = {}
@@ -216,19 +213,6 @@ processData = (command,args) ->
             }
       return {alphabetized: false, infractions} if infractions.length
       return {alphabetized: true}
-    when 'alphabetizeStyle'
-      data = processData 'convertStyleToJson', args
-      for file_name, file of data
-        for index, attribute_info of file
-          {rules, indent} = attribute_info
-          continue unless alphabetize rules
-
-          spaces = Array(parseInt(indent) + 1).join ' '
-          for attr, line_num in rules
-            line = parseInt(index) + parseInt(line_num,10)
-            writeToLine file_name, "#{spaces}#{attr}", line
-      return processData 'checkAlphabetized', args
-
     when 'convertStyleToJson'
       validate = ({tag, rules}) =>
         return false unless tag and rules

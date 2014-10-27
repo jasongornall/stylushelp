@@ -5,37 +5,35 @@ This is a package designed to assist with common problems and allow for stylus t
 ###Install
   (for command line)
   ```
-  npm install -g stylus-help 
+  npm install -g stylus-help
   ```
   (for using in code)
   ```
-  npm install stylus-help 
+  npm install stylus-help
   ```
-  
+
 Functions for command line
   ```
   stylus-help normalizeZvalues <path to stylus dir or file>, [value to normalize on defaults to 10]
   stylus-help inspectZValues <path to stylus dir or file>
   stylus-help convertStyleToJson <path to stylus dir or file> (note need to > to json write to console)
   stylus-help checkAlphabetized <path to stylus dir or file>
-  stylus-help alphabetizeStyle <path to stylus dir or file>
   stylus-help simple_lint <path to stylus dir or file>
   ```
 Functions as a npm package (same returns)<coffeescript>
 ```coffeescript
   stylus_help = require 'stylus-help'
-  
+
   data = stylus_help.processData 'normalizeZvalues', [directory/file]
   data = stylus_help.processData 'inspectZValues', [directory/file]
   data = stylus_help.processData 'convertStyleToJson', [directory/file]
   data = stylus_help.processData 'checkAlphabetized', [directory/file]
-  data = stylus_help.processData 'alphabetizeStyle', [directory/file]
   data = stylus_help.processData 'simple_lint', [directory/file, optional_config_data]
 ```
 ### normalizeZvalues
   Takes a directory (not recursive) and goes through and normalizes z-index across the files... It automatically uses a buffer of 10 between z-index values. You can manually specify a buffer if you want to only have a space of 3,4 between values
-  
-  sample call 
+
+  sample call
   ```
   stylus-help normalizeZvalues testing/
   ```
@@ -73,15 +71,15 @@ After Execution
     .apple
       z-index 31
   ```
-  
+
 ### inspectZValues
   Returns a json structure showing the ordering of z indexes
-  
-  sample call 
+
+  sample call
   ```
   stylus-help inspectZValues testing/
   ```
-  
+
   Return sample.. This shows the z-index in order and the files they are used in
   ```json
   {
@@ -104,8 +102,8 @@ After Execution
   ```
 ### checkAlphabetized
   Returns a json structure with a true or false and a line number showing where the non alphabetized attribute starts
-  
-  sample call 
+
+  sample call
   ```
   stylus-help checkAlphabetized testing/test.styl
   ```
@@ -129,8 +127,8 @@ After Execution
       z-index 11
 
  ```
- 
- 
+
+
  Return sample for a non alphabetized file
   ```json
   {
@@ -151,60 +149,11 @@ After Execution
    ]
   }
   ```
-  
-### alphabetizeStyle
-  Returns a json structure with a true or false and a line number showing where the non alphabetized attribute starts
-  
-  sample call 
-  ```
-  stylus-help alphabetizeStyle testing/test.styl
-  ```
 
- Sample File
- ```
- .left
-    div
-      z-index 41
-      display block
-      position relative
-      left 50px
-    div
-      right 100px
-      position absolute
-  a
-    z-index 21
-    margin-left 2px
-  .panda
-    .test
-      z-index 11
-
- ```
- 
- 
- Modifications after execution
-  ```
-  .left
-    div
-      display block
-      left 50px
-      position relative
-      z-index 41
-    div
-      position absolute
-      right 100px
-  a
-    margin-left 2px
-    z-index 21
-  .panda
-    .test
-      z-index 11
-
-  ```
-  
 ### convertStyleToJson
   Returns a json structure with a true or false and a line number showing where the non alphabetized attribute starts
-  
-  sample call 
+
+  sample call
   ```
   stylus-help alphabetizeStyle testing/test.styl
   ```
@@ -294,7 +243,7 @@ underline()
 ```
 ### simple lint
   This utilized the existing functions in this package to do a basic lint on the stylus file.
-  
+
   A sample call using the plugin
   ```
    stylus-help simple_lint <path to stylus dir or file>
@@ -329,8 +278,8 @@ underline()
     JSON.stringify(data,null)
   ```
   The above call executed on the below file
-  
-  
+
+
   ```
   underline()
     &:not(.signup):not(.background)
@@ -342,7 +291,7 @@ underline()
       &:hover
         background rgba($frame_background_color, .4)
         border-bottom 4px solid $color
-  
+
     .exports.region
     border-top 1px solid $background_color
     bottom 0
@@ -395,8 +344,8 @@ underline()
   ```
 ####style_attribute_check
  makes use of a JSON file to validate common key/value mixups
-  
-  
 
-  
-  
+
+
+
+
