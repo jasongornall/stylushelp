@@ -1,14 +1,32 @@
-.rings
-  circle, path, [panda = 'test']
-    $test = 'anda'
-    testingAnda()
-    alpha 0
-    stroke-opacity .7
-    stroke-width 15
-  .test
-    alpha 0
-    below 0
-    margin-left 10px
-  .what
-    below 0
-    alpha 0
+@import 'nib'
+
+.exports
+  background black
+  bottom 0
+  color white
+  left 0
+  position fixed
+  right 0
+  top 0
+  z-index 99
+  > .pages > .page > .inner
+    > .images > .image, > .html > .code
+      pointer-events none
+      position fixed
+      text-align center
+      width 20%
+      z-index 20
+      &.top-left, &.top, &.top-right
+        top 20px
+      &.left, &.center, &.right
+        top 50%
+      &.bottom-left, &.bottom, &.bottom-right
+        bottom 20px
+      &.top-left, &.left, &.bottom-left
+        left 20px
+      &.top-right, &.right, &.bottom-right
+        right 20px
+      &.top, &.center, &.bottom
+        margin-left -20%
+        left 50%
+        width 40%
