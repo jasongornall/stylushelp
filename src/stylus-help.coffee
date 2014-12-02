@@ -271,14 +271,16 @@ processData = (command,args) ->
         tag = ''
         indent = 0
 
-        for line_num, line of data
-          continue if line.match /^\s*$/
+        for line, num in data
           line = line?.replace /^\s*\/\/.+/, ''
+          continue if line.match /^\s*$/
+          line_num = num
+
           if tag_found_test.test line
             tagFound = true
 
             if attributeSet.length
-              line_number = parseInt(line_num, 10) + 1 - attributeSet.length
+              line_number = line_num + 1 - attributeSet.length
               if validate {tag, rules: attributeSet}
                 obj[line_number]= {
                   indent
@@ -289,11 +291,7 @@ processData = (command,args) ->
               attributeSet = []
               indent = 0
 
-            if getPreSpaces(line) > getPreSpaces(tag)
-              tag = join tag, line.trim()
-            else
-              tag = line
-
+            tag = line
           else if tagFound
             pre_spaces = getPreSpaces(line)
             if indent == 0
@@ -304,7 +302,7 @@ processData = (command,args) ->
             if indent == pre_spaces
               attributeSet.push("#{line.trim()}")
             else
-              line_number = parseInt(line_num, 10) - attributeSet.length
+              line_number = line_num - attributeSet.length
 
               if validate {tag, rules: attributeSet}
                 obj[line_number]= {
@@ -316,6 +314,15 @@ processData = (command,args) ->
               tag = ''
               attributeSet = []
               indent = 0
+
+        # did the loop end and we have attributes remaining? dump em
+        line_number = line_num + 1 - attributeSet.length
+        if validate {tag, rules: attributeSet}
+          obj[line_number]= {
+            indent
+            rules: attributeSet
+            tag: tag.trim()
+          }
 
         total_return[file] = obj
 
