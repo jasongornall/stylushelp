@@ -271,7 +271,7 @@ processData = (command,args) ->
         tag = ''
         indent = 0
 
-        for num, line of data
+        for line, num in data
           line = line?.replace /^\s*\/\/.+/, ''
           continue if line.match /^\s*$/
           line_num = num
@@ -280,7 +280,7 @@ processData = (command,args) ->
             tagFound = true
 
             if attributeSet.length
-              line_number = parseInt(line_num, 10) + 1 - attributeSet.length
+              line_number = line_num + 1 - attributeSet.length
               if validate {tag, rules: attributeSet}
                 obj[line_number]= {
                   indent
@@ -302,7 +302,7 @@ processData = (command,args) ->
             if indent == pre_spaces
               attributeSet.push("#{line.trim()}")
             else
-              line_number = parseInt(line_num, 10) - attributeSet.length
+              line_number = line_num - attributeSet.length
 
               if validate {tag, rules: attributeSet}
                 obj[line_number]= {
@@ -316,7 +316,7 @@ processData = (command,args) ->
               indent = 0
 
         # did the loop end and we have attributes remaining? dump em
-        line_number = parseInt(line_num, 10) + 1 - attributeSet.length
+        line_number = line_num + 1 - attributeSet.length
         if validate {tag, rules: attributeSet}
           obj[line_number]= {
             indent
