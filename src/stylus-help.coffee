@@ -191,8 +191,8 @@ processData = (command, args) ->
       preJsonChecks()
       postJsonChecks()
       alphabetizeCheck()
-
       return files
+
     when 'checkAlphabetized'
       infractions = []
       data = processData 'convertStyleToJson', args
@@ -304,13 +304,11 @@ processData = (command, args) ->
             prev_indent = line_indent - 1
             _tag = ''
             parentLine = ->
-              if prev_indent < 0
-                return _tag
-              else
-                if tags[prev_indent]
-                  _tag = join tags[prev_indent], _tag
-                prev_indent--
-                parentLine()
+              return _tag if prev_indent < 0
+              if tags[prev_indent]
+                _tag = join tags[prev_indent], _tag
+              prev_indent--
+              parentLine()
 
             tag = join parentLine(), line
 
