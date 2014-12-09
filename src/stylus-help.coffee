@@ -282,9 +282,7 @@ processData = (command, args) ->
           if tag_found_test.test line
             tagFound = true
 
-
             if attributeSet.length
-
               line_number = parseInt(line_num, 10) + 1 - attributeSet.length
               if validate {tag, rules: attributeSet}
 
