@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "optimist": "0.6.x",
-    "async": "0.9.x"
+    "async": "0.9.x",
+    "columnify": "1.2.x"
   },
   "devDependencies": {
       "coffee-script": "1.7.x"
@@ -38,5 +39,5 @@
   "scripts": {
       "prepublish": "cake build"
   },
-  "version": "1.7.2"
+  "version": "1.7.3"
 }

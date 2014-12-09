@@ -77,7 +77,7 @@ getFiles = (args, next) ->
   return read_files
 
 # COMMAND LINE STUFF
-processData = (command,args) ->
+processData = (command, args) ->
   read_files = getFiles args
   switch command
     when 'simple_lint'
@@ -94,18 +94,18 @@ processData = (command,args) ->
       }
       files = {}
       addError = (msg, line, line_num, file) ->
-        files[file] ?= [ ]
+        files[file] ?= []
         files[file].push {
           message: msg
           line: line
           line_num
         }
 
-      preJsonChecks =  ->
+      preJsonChecks = ->
+
         {bad_indent, comment_space, zero_px} = config or {}
         for file in read_files
-          if not (/.styl/.test(file))
-            continue
+          continue if not (/.styl/.test(file))
 
           data = fs.readFileSync file, 'utf8'
           data = data.split('\n')
@@ -130,7 +130,8 @@ processData = (command,args) ->
                 addError zero_px, line, (line_num + 1), file
 
       postJsonChecks =  ->
-        data = processData 'convertStyleToJson',args
+
+        data = processData 'convertStyleToJson', args
         stylus_stags = []
         total_tags = {}
 
@@ -175,10 +176,10 @@ processData = (command,args) ->
                 if check_1?.length != check_2?.length
                   addError comma_space, attribute, (line + key), file_name
 
-
             total_tags = []
 
       alphabetizeCheck = ->
+
         {alphabetize_check} = config or {}
         if alphabetize_check
           return_data = processData 'checkAlphabetized',args
@@ -190,11 +191,11 @@ processData = (command,args) ->
       preJsonChecks()
       postJsonChecks()
       alphabetizeCheck()
-
       return files
+
     when 'checkAlphabetized'
       infractions = []
-      data = processData 'convertStyleToJson',args
+      data = processData 'convertStyleToJson', args
       for file_name, file of data
         for tag, attribute_info of file
           {rules} = attribute_info
@@ -213,15 +214,35 @@ processData = (command,args) ->
             }
       return {alphabetized: false, infractions} if infractions.length
       return {alphabetized: true}
+
     when 'convertStyleToJson'
+      tag_found_test = ///
+        (^.+(\[.+\])$)| # attribute selectors
+        ((\n|^)(\s)*(\.|&|>|\#|@media).+)| # grab initial class/tag/media/&/ >
+        (\n|^)(\s)*( # look for html elements
+
+          # valid html elements
+          table|td|th|tr|div|span|a|h1|h2|h3|
+          h4|h5|h6|strong|em|quote|form|fieldset|
+          label|input|textarea|button|body|img|
+          ul|li|html|object|iframe|p|blockquote|
+          abbr|address|cite|del|dfn|ins|kbd|q|samp|
+          sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|
+          tfoot|thead|article|aside|canvas|details|figcaption|
+          figure|footer|header|hgroup|menu|nav|section|summary|
+          time|mark|audio|video|
+
+          # valid svg elements keeping this really basic for now
+          circle|path|text|ellipse|line|polygon|polyline
+
+      )(\:.+|,|\s|\.|$).* #support for div.whatever or :after
+      ///
+
       validate = ({tag, rules}) =>
         return false unless tag and rules
         for rule in rules
-          if /filter: url\(/.test(rule)
-            return false
-        if /@css/.test tag
-          return false
-
+          return false if /filter: url\(/.test(rule)
+        return false if /@css/.test tag
         return true
 
 
@@ -237,52 +258,36 @@ processData = (command,args) ->
         for arg1 in arr_1
           for arg2 in arr_2
             str.push("#{arg1.trim()} #{arg2.trim()}")
-        return str.join(', ')
 
+        return str.join(', ')
 
       for file in read_files
         continue unless /.styl/.test file
         obj = {}
-        tag_found_test = ///
-          (^.+(\[.+\])$)| # attribute selectors
-          ((\n|^)(\s)*(\.|&|>|\#|@media).+)| # grab initial class/tag/media/&/ >
-          (\n|^)(\s)*( # look for html elements
-
-            # valid html elements
-            table|td|th|tr|div|span|a|h1|h2|h3|
-            h4|h5|h6|strong|em|quote|form|fieldset|
-            label|input|textarea|button|body|img|
-            ul|li|html|object|iframe|p|blockquote|
-            abbr|address|cite|del|dfn|ins|kbd|q|samp|
-            sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|
-            tfoot|thead|article|aside|canvas|details|figcaption|
-            figure|footer|header|hgroup|menu|nav|section|summary|
-            time|mark|audio|video|
-
-            # valid svg elements keeping this really basic for now
-            circle|path|text|ellipse|line|polygon|polyline
-
-        )(\:.+|,|\s|\.|$).* #support for div.whatever or :after
-        ///
-        data = fs.readFileSync file,'utf8'
+        data = fs.readFileSync file, 'utf8'
         data = data.split('\n')
         tagFound = false
         attributeSet = []
         tag = ''
         indent = 0
 
-        for line, num in data
+        line_num = 0
+        parentIdentation = 0
+        tags = {}
+        for line, line_num in data
+
           line = line?.replace /^\s*\/\/.+/, ''
           continue if line.match /^\s*$/
-          line_num = num
 
           if tag_found_test.test line
             tagFound = true
 
             if attributeSet.length
-              line_number = line_num + 1 - attributeSet.length
+              line_number = parseInt(line_num, 10) + 1 - attributeSet.length
               if validate {tag, rules: attributeSet}
-                obj[line_number]= {
+
+
+                obj[line_number] = {
                   indent
                   rules: attributeSet
                   tag: tag.trim()
@@ -291,19 +296,30 @@ processData = (command,args) ->
               attributeSet = []
               indent = 0
 
-            tag = line
+            line_indent = getPreSpaces line
+            tags[line_indent] = line
+
+            prev_indent = line_indent - 1
+            _tag = ''
+            parentLine = ->
+              return _tag if prev_indent < 0
+              if tags[prev_indent]
+                _tag = join tags[prev_indent], _tag
+              prev_indent--
+              parentLine()
+
+            tag = join parentLine(), line
+
           else if tagFound
             pre_spaces = getPreSpaces(line)
-            if indent == 0
+            if indent is 0
               indent = pre_spaces
-              if indent == 0
-                continue
+              continue if indent is 0
 
-            if indent == pre_spaces
+            if indent is pre_spaces
               attributeSet.push("#{line.trim()}")
             else
-              line_number = line_num - attributeSet.length
-
+              line_number = parseInt(line_num, 10) - attributeSet.length
               if validate {tag, rules: attributeSet}
                 obj[line_number]= {
                   indent
@@ -315,14 +331,14 @@ processData = (command,args) ->
               attributeSet = []
               indent = 0
 
-        # did the loop end and we have attributes remaining? dump em
-        line_number = line_num + 1 - attributeSet.length
-        if validate {tag, rules: attributeSet}
-          obj[line_number]= {
-            indent
-            rules: attributeSet
-            tag: tag.trim()
-          }
+        if attributeSet.length
+          line_number = parseInt(line_num, 10) + 1 - attributeSet.length
+          if validate {tag, rules: attributeSet}
+            obj[line_number] = {
+              indent: getPreSpaces line
+              rules: attributeSet
+              tag: tag.trim()
+            }
 
         total_return[file] = obj
 
