@@ -218,7 +218,7 @@ processData = (command, args) ->
     when 'convertStyleToJson'
       tag_found_test = ///
         (^.+(\[.+\])$)| # attribute selectors
-        ((\n|^)(\s)*(\.|&|>|\#|@media|::-webkit).+)| # grab initial class/tag/media/&/ >
+        ((\n|^)(\s)*(\.|&|>|\#|@media|\:\:\-).+)| # grab initial class/tag/media/&/ >
         (\n|^)(\s)*( # look for html elements
 
           # valid html elements
