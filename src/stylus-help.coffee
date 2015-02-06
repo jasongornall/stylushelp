@@ -230,7 +230,7 @@ processData = (command, args) ->
           sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|
           tfoot|thead|article|aside|canvas|details|figcaption|
           figure|footer|header|hgroup|menu|nav|section|summary|
-          time|mark|audio|video|
+          time|mark|audio|video|svg|g
 
           # valid svg elements keeping this really basic for now
           circle|path|text|ellipse|line|polygon|polyline

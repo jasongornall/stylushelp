@@ -5,7 +5,10 @@
       "center",
       "justify",
       "initial",
-      "inherit"
+      "inherit",
+      "start",
+      "end",
+      "match-parent"
   ],
   "float": [
       "left",
