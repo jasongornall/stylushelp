@@ -165,7 +165,7 @@ processData = (command, args) ->
 
               # semi colon check
               if no_colon_semicolon
-                if /;|:/.test attribute
+                if /;|:/.test attribute and not /url/.test attribute
                   addError no_colon_semicolon, attribute, (line + key), file_name
 
 
@@ -218,7 +218,7 @@ processData = (command, args) ->
     when 'convertStyleToJson'
       tag_found_test = ///
         (^.+(\[.+\])$)| # attribute selectors
-        ((\n|^)(\s)*(\.|&|>|\#|@media).+)| # grab initial class/tag/media/&/ >
+        ((\n|^)(\s)*(\.|&|>|\#|@media|\:\:\-).+)| # grab initial class/tag/media/&/ >
         (\n|^)(\s)*( # look for html elements
 
           # valid html elements
@@ -230,7 +230,7 @@ processData = (command, args) ->
           sup|var|b|i|dl|dt|dd|ol|legend|caption|tbody|
           tfoot|thead|article|aside|canvas|details|figcaption|
           figure|footer|header|hgroup|menu|nav|section|summary|
-          time|mark|audio|video|
+          time|mark|audio|video|svg|g
 
           # valid svg elements keeping this really basic for now
           circle|path|text|ellipse|line|polygon|polyline
