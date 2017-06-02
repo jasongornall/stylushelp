@@ -165,7 +165,7 @@ processData = (command, args) ->
 
               # semi colon check
               if no_colon_semicolon
-                if /;|:/.test attribute and not /url/.test attribute
+                if /;|:/.test(attribute) and not /url/.test attribute
                   addError no_colon_semicolon, attribute, (line + key), file_name
 
 
@@ -173,7 +173,9 @@ processData = (command, args) ->
               if comma_space
                 check_1 = attribute.match /,/g
                 check_2 =  attribute.match /,\s/g
+                check_3 = attribute.match(/content/g)
                 if check_1?.length != check_2?.length
+                  continue if check_3
                   addError comma_space, attribute, (line + key), file_name
 
             total_tags = []
